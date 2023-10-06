@@ -1,7 +1,16 @@
+using System;
+using GameOfLife.Entities.Interfaces;
+
 namespace GameOfLife.Entities;
 
-public abstract class Animal
+public abstract class Animal : Entity, ICanMove, ICanBreed
 {
-    public int HP { get; set; }
-    public int[,] Position { get; set; }
+    public void Die()
+    {
+        if (Hp < 0)
+        {
+            //Destroys entity
+        }
+    }
 }
+

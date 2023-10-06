@@ -1,6 +1,6 @@
 namespace GameOfLife.Entities.Interfaces;
 
-public class ICanBreed
+public interface ICanBreed
 {
     
 }
