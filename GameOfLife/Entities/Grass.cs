@@ -15,8 +15,19 @@ public class Grass : Entity, ICanSpread, ICanBeEaten
     public Grass()
     {
         Hp = (int)State.Seed;
+        Age = 0;
+        posX = 0;
+        posY = 0;
     }
-
+    
+    public Grass(int posX, int posY)
+    {
+        Hp = (int)State.Seed;
+        Age = 0;
+        this.posX = posX;
+        this.posY = posY;
+    }
+    
     public bool CanBeEaten()
     {
         //If it is in a state of Seed, it can not be eaten
