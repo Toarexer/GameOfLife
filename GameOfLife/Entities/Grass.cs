@@ -1,8 +1,9 @@
 using GameOfLife.Entities.Interfaces;
+using GameOfLife.GameLogic;
 
 namespace GameOfLife.Entities;
 
-public class Grass : Entity, ICanSpread, ICanBeEaten
+public class Grass : Animal, ICanSpread, ICanBeEaten
 {
     public enum State
     {
@@ -16,16 +17,12 @@ public class Grass : Entity, ICanSpread, ICanBeEaten
     {
         Hp = (int)State.Seed;
         Age = 0;
-        posX = 0;
-        posY = 0;
     }
     
     public Grass(int posX, int posY)
     {
         Hp = (int)State.Seed;
         Age = 0;
-        this.posX = posX;
-        this.posY = posY;
     }
     
     public bool CanBeEaten()

@@ -1,5 +1,6 @@
 using System.Net.Http;
 using GameOfLife.Entities.Interfaces;
+using GameOfLife.GameLogic;
 
 namespace GameOfLife.Entities;
 
@@ -10,16 +11,12 @@ public class Rabbit : Animal, ICanBeEaten, ICanMove, ICanBreed, ICanAge
     {
         Hp = 5;
         Age = 0;
-        posX = 0;
-        posY = 0;
     }
 
     public Rabbit(int posX, int posY)
     {
         Hp = 5;
         Age = 0;
-        this.posX = posX;
-        this.posY = posY;
     }
 
     public bool CanBeEaten()
