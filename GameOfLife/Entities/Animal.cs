@@ -27,7 +27,10 @@ public abstract class Animal : Simulable, ICanMove, ICanBreed, ICanAge
     
     public void Die()
     {
-        //Destroys entity
+        if (ShouldDie())
+        {
+            //Destroys entity
+        }
     }
 }
 
