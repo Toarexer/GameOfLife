@@ -26,7 +26,7 @@ public class Fox : Animal
     {
         if (!ShouldEat()) return;
         Hp += rabbit.NutritionalValue;
-        rabbit.Die();
+        rabbit.ShouldDie();
     }
     
     public override void Update(Grid grid)
@@ -37,7 +37,7 @@ public class Fox : Animal
 
         IncreaseAge(1);
         Hp--;
-        Die();
+        ShouldDie();
     }
 
     public override bool ShouldCreateDescendant(Grid grid)
