@@ -1,10 +1,13 @@
+using System;
 using GameOfLife.Entities.Interfaces;
 using GameOfLife.GameLogic;
 
 namespace GameOfLife.Entities;
 
-public class Grass : Animal, ICanSpread, ICanBeEaten
+public class Grass : Simulable, ICanSpread, IComparable<Grass>
 {
+    private int Hp { get; set; }
+    private int Age { get; set; }
     public enum State
     {
         Seed = 0,
@@ -23,6 +26,12 @@ public class Grass : Animal, ICanSpread, ICanBeEaten
     {
         Hp = (int)State.Seed;
         Age = 0;
+        Position = (posX, posY);
+    }
+    
+    public override void Update(Grid grid)
+    {
+        
     }
     
     public bool CanBeEaten()
@@ -33,13 +42,35 @@ public class Grass : Animal, ICanSpread, ICanBeEaten
 
     public int GetEaten()
     {
-        //Returns 'nutritional' (Hp) value to the animal who eats it depending on the State of the seedling.
-        return (int)(State)Hp;
+        int tempHp = (int)GetState();
+        if (CanBeEaten())
+        {
+            Hp = (int)GetState() - 1;
+        }
+
+        return tempHp;
     }
 
     public State GetState()
     {
         //Returns the state of the seedling
         return (State)Hp;
+    }
+
+    public int CompareTo(Grass? grass)
+    {
+        return Hp.CompareTo(grass?.Hp);
+    }
+
+    
+
+    public bool CanSpread()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Spread()
+    {
+        throw new NotImplementedException();
     }
 }
