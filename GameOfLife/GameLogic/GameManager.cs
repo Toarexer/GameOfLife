@@ -13,7 +13,7 @@ public class GameManager {
       foreach (Simulable sim in sims)
          _grid.CreateSim(sim);
    }
-   
+
    private void UpdateSims() {
       for (int y = 0; y < _grid.Height; y++)
          for (int x = 0; x < _grid.Width; x++)
@@ -27,19 +27,21 @@ public class GameManager {
             foreach (Simulable sim in _grid[x, y].Where(sim => sim.ShouldDie()))
                _grid.RemoveSim(sim);
    }
-   
+
    private void ReproduceSims() {
       for (int y = 0; y < _grid.Height; y++)
          for (int x = 0; x < _grid.Width; x++)
             foreach (Simulable sim in _grid[x, y].Where(sim => sim.ShouldCreateDescendant(_grid)))
                _grid.CreateSim(sim.NewDescendant());
    }
-   
+
    private void MoveSims() {
       for (int y = 0; y < _grid.Height; y++)
          for (int x = 0; x < _grid.Width; x++)
-            foreach (Simulable sim in _grid[x, y].Where(sim => sim.NextPosition is not null))
+            foreach (Simulable sim in _grid[x, y].Where(sim => sim.NextPosition is not null)) {
                _grid.MoveSim(sim, sim.NextPosition!.Value.x, sim.NextPosition!.Value.y);
+               sim.NextPosition = null;
+            }
    }
 
    public void Update() {

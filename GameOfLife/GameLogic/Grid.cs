@@ -35,7 +35,7 @@ public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
     public IEnumerator<IReadOnlyList<Simulable>> GetEnumerator() => new GridEnumerator(this);
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+
     public bool WithinBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 
     public IReadOnlyList<Simulable> this[int x, int y] {
