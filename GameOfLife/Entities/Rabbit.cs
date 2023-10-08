@@ -9,7 +9,7 @@ namespace GameOfLife.Entities;
 public class Rabbit : Animal, ICanBeEaten
 {
     public readonly int NutritionalValue = 3;
-    private List<Simulable?> _neighbours = new List<Simulable?>(); 
+    private List<Simulable?> _neighbours = new(); 
     public Rabbit()
     {
         Hp = 5;
@@ -30,7 +30,7 @@ public class Rabbit : Animal, ICanBeEaten
         Eat((Grass?)_neighbours.FirstOrDefault(x => x is Grass));
         IncreaseAge(1);
         Hp--;
-        Die();
+        ShouldDie();
     }
 
     public override bool ShouldCreateDescendant(Grid grid)
