@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace GameOfLife.GameLogic;
 
 public class GameManager {
@@ -9,7 +12,7 @@ public class GameManager {
          _grid.CreateSim(sim);
    }
 
-   public void Run() {
+   public void Update() {
       for (int y = 0; y < _grid.Height; y++)
          for (int x = 0; x < _grid.Width; x++)
             foreach (ISimulable sim in _grid[x, y]) {
@@ -20,9 +23,28 @@ public class GameManager {
 
                if (sim.ShouldCreateDescendant(_grid))
                   _grid.CreateSim(sim.NewDescendant());
-               
-               if(sim.ShouldDie())
+
+               if (sim.ShouldDie())
                   _grid.RemoveSim(sim);
             }
+   }
+
+   public async Task Run(CancellationToken ctoken, int msInterval = 1000, int times = 0) {
+      try {
+         if (times == 0)
+            while (!ctoken.IsCancellationRequested) {
+               Update();
+               await Task.Delay(msInterval, ctoken);
+            }
+         else
+            for (int i = 0; i < times; i++) {
+               if (ctoken.IsCancellationRequested)
+                  break;
+               Update();
+               await Task.Delay(msInterval, ctoken);
+            }
+      }
+      catch (TaskCanceledException) {
+      }
    }
 }

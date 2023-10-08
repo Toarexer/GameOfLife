@@ -5,45 +5,45 @@ namespace GameOfLife.GameLogic;
 
 public class Grid {
 
-    readonly List<ISimulable>[,] _cells;
+    private readonly List<ISimulable>[,] _cells;
 
     public int Width => _cells.GetLength(0);
     public int Height => _cells.GetLength(1);
 
-    public Grid(int width, int height) {
+    internal Grid(int width, int height) {
         _cells = new List<ISimulable>[width, height];
     }
 
-    public List<ISimulable> this[int x, int y] => _cells[x, y];
+    public IReadOnlyList<ISimulable> this[int x, int y] => _cells[x, y].AsReadOnly();
 
-    public bool CreateSim(ISimulable sim) {
+    internal bool CreateSim(ISimulable sim) {
         (int x, int y) = sim.Position();
         if (x < 0 || x >= Width || y < 0 || y >= Height)
             return false;
 
-        this[x, y].Add(sim);
+        _cells[x, y].Add(sim);
         return true;
     }
 
-    public bool MoveSim(ISimulable sim, int x, int y) {
+    internal bool MoveSim(ISimulable sim, int x, int y) {
         if (x < 0 || x >= Width || y < 0 || y >= Height)
             return false;
 
         (int ox, int oy) = sim.Position();
         sim.SetPosition(x, y);
 
-        this[ox, oy].Remove(sim);
-        this[x, y].Add(sim);
+        _cells[ox, oy].Remove(sim);
+        _cells[x, y].Add(sim);
 
         return true;
     }
 
-    public bool RemoveSim(ISimulable sim) {
+    internal bool RemoveSim(ISimulable sim) {
         (int x, int y) = sim.Position();
         if (x < 0 || x >= Width || y < 0 || y >= Height)
             return false;
 
-        this[x, y].Remove(sim);
+        _cells[x, y].Remove(sim);
         return true;
     }
 
