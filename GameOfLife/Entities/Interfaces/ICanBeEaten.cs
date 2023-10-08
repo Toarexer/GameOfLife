@@ -1,3 +1,5 @@
+using System.IO.Enumeration;
+
 namespace GameOfLife.Entities.Interfaces;
 
 public interface ICanBeEaten
@@ -6,5 +8,5 @@ public interface ICanBeEaten
     public bool CanBeEaten();
     
     //Entity gets eaten and adds HP to the predator
-    public int GetEaten();
+    public void GetEaten();
 }
