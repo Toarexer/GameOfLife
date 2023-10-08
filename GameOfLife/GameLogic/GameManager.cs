@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,33 +13,46 @@ public class GameManager {
       foreach (Simulable sim in sims)
          _grid.CreateSim(sim);
    }
-
-   private void UpdateSim(Simulable sim) {
-      sim.Update(_grid);
-                  
-      var nextpos = sim.NextPosition;
-      if (nextpos is not null)
-         _grid.MoveSim(sim, nextpos.Value.x, nextpos.Value.y);
-
-      if (sim.ShouldCreateDescendant(_grid))
-         _grid.CreateSim(sim.NewDescendant());
-
-      if (sim.ShouldDie())
-         _grid.RemoveSim(sim);
-   }
    
-   public void Update() {
+   private void UpdateSims() {
       for (int y = 0; y < _grid.Height; y++)
          for (int x = 0; x < _grid.Width; x++)
-            foreach (Simulable sim in _grid[x, y]) {
-               try {
-                  UpdateSim(sim);
-               }
-               catch (Exception e) {
-                  // Temporary solution
-                  Console.Error.WriteLine(e);
-               }
-            }
+            foreach (Simulable sim in _grid[x, y])
+               sim.Update(_grid);
+   }
+
+   private void KillSims() {
+      for (int y = 0; y < _grid.Height; y++)
+         for (int x = 0; x < _grid.Width; x++)
+            foreach (Simulable sim in _grid[x, y].Where(sim => sim.ShouldDie()))
+               _grid.RemoveSim(sim);
+   }
+   
+   private void ReproduceSims() {
+      for (int y = 0; y < _grid.Height; y++)
+         for (int x = 0; x < _grid.Width; x++)
+            foreach (Simulable sim in _grid[x, y].Where(sim => sim.ShouldCreateDescendant(_grid)))
+               _grid.CreateSim(sim.NewDescendant());
+   }
+   
+   private void MoveSims() {
+      for (int y = 0; y < _grid.Height; y++)
+         for (int x = 0; x < _grid.Width; x++)
+            foreach (Simulable sim in _grid[x, y].Where(sim => sim.NextPosition is not null))
+               _grid.MoveSim(sim, sim.NextPosition!.Value.x, sim.NextPosition!.Value.y);
+   }
+
+   public void Update() {
+      try {
+         UpdateSims();
+         KillSims();
+         ReproduceSims();
+         MoveSims();
+      }
+      catch (Exception e) {
+         // Temporary solution
+         Console.Error.WriteLine(e);
+      }
    }
 
    public async Task Run(CancellationToken ctoken, int msInterval = 1000, int times = 0) {
