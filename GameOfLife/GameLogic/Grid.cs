@@ -4,8 +4,8 @@ using System.Linq;
 
 namespace GameOfLife.GameLogic;
 
-public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
-    public class GridEnumerator : IEnumerator<IReadOnlyList<Simulable>> {
+public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
+    public class GridEnumerator : IEnumerator<IReadOnlyList<ISimulable>> {
         private readonly Grid _grid;
         private int _index = -1;
 
@@ -15,7 +15,7 @@ public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
 
         public void Reset() => _index = -1;
 
-        public IReadOnlyList<Simulable> Current => _grid[_index % _grid.Width, _index / _grid.Width];
+        public IReadOnlyList<ISimulable> Current => _grid[_index % _grid.Width, _index / _grid.Width];
 
         object IEnumerator.Current => Current;
 
@@ -23,34 +23,34 @@ public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
         }
     }
 
-    private readonly List<Simulable>[,] _cells;
+    private readonly List<ISimulable>[,] _cells;
 
     public int Width => _cells.GetLength(0);
     public int Height => _cells.GetLength(1);
 
     internal Grid(int width, int height) {
-        _cells = new List<Simulable>[width, height];
+        _cells = new List<ISimulable>[width, height];
     }
 
-    public IEnumerator<IReadOnlyList<Simulable>> GetEnumerator() => new GridEnumerator(this);
+    public IEnumerator<IReadOnlyList<ISimulable>> GetEnumerator() => new GridEnumerator(this);
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public bool WithinBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 
-    public IReadOnlyList<Simulable> this[int x, int y] {
+    public IReadOnlyList<ISimulable> this[int x, int y] {
         get {
             if (WithinBounds(x, y))
                 return _cells[x, y].AsReadOnly();
-            return new List<Simulable>().AsReadOnly();
+            return new List<ISimulable>().AsReadOnly();
         }
     }
 
-    public IEnumerable<T> SimsOfType<T>(int x, int y) where T : Simulable {
+    public IEnumerable<T> SimsOfType<T>(int x, int y) where T : ISimulable {
         return this[x, y].OfType<T>();
     }
 
-    internal bool CreateSim(Simulable sim) {
+    internal bool CreateSim(ISimulable sim) {
         (int x, int y) = sim.Position;
         if (!WithinBounds(x, y))
             return false;
@@ -59,7 +59,7 @@ public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
         return true;
     }
 
-    internal bool MoveSim(Simulable sim, int x, int y) {
+    internal bool MoveSim(ISimulable sim, int x, int y) {
         if (!WithinBounds(x, y))
             return false;
 
@@ -72,7 +72,7 @@ public class Grid : IEnumerable<IReadOnlyList<Simulable>> {
         return true;
     }
 
-    internal bool RemoveSim(Simulable sim) {
+    internal bool RemoveSim(ISimulable sim) {
         (int x, int y) = sim.Position;
         if (!WithinBounds(x, y))
             return false;

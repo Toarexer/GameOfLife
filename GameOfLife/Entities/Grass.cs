@@ -4,7 +4,7 @@ using GameOfLife.GameLogic;
 
 namespace GameOfLife.Entities;
 
-public class Grass : Simulable, ICanSpread, IComparable<Grass>
+public class Grass : ISimulable, ICanSpread, IComparable<Grass>
 {
     private int Hp { get; set; }
     private int Age { get; set; }
