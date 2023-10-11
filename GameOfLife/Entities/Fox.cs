@@ -9,6 +9,12 @@ namespace GameOfLife.Entities;
 public class Fox : Animal
 {
     private List<Simulable?> _neighbours = new();
+
+    (int x, int y) _position { get; set; } = (0, 0);
+    (int x, int y)? _nextposition { get; set; }
+
+    (int x, int y) ISimulable.Position { get => _position; set => _position = value; }
+    (int x, int y)? ISimulable.NextPosition { get => _nextposition; set => _nextposition = value; }
     public Fox()
     {
         Hp = 10;
