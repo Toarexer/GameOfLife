@@ -12,6 +12,7 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
     private List<Rabbit> _neighbours = new();
 
     public (int x, int y) Position { get; set; } = (0, 0);
+    public (int x, int y)? NextPosition { get; set; }
 
     private int Hp { get; set; }
     private int Age { get; set; }
@@ -21,7 +22,6 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
         Tuft = 1,
         Tender = 2
     }
-    
     
     public Grass()
     {
@@ -42,8 +42,22 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
         _neighbours = grid.SimsOfTypeInRadius<Rabbit>(Position.x,Position.y, 2).ToList();
         
     }
-    
 
+    public bool ShouldDie()
+    {
+        return false;
+    }
+
+    public bool ShouldCreateDescendant(Grid grid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ISimulable NewDescendant(Grid grid)
+    {
+        throw new NotImplementedException();
+    }
+    
     public bool CanBeEaten()
     {
         //If it is in a state of Seed, it can not be eaten
