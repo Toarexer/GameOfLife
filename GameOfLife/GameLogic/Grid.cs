@@ -50,6 +50,20 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         return this[x, y].OfType<T>();
     }
 
+    public IEnumerable<T> SimsOfTypeInRadius<T>(int ox, int oy, int r) where T : ISimulable {
+        for (int y = oy - r; y < oy + r; y++)
+            for (int x = ox - r; x < ox + r; x++)
+                foreach (T sim in this[x, y].OfType<T>())
+                    yield return sim;
+    }
+
+    public IEnumerable<ISimulable> SimsInRadius(int ox, int oy, int r) {
+        for (int y = oy - r; y < oy + r; y++)
+            for (int x = ox - r; x < ox + r; x++)
+                foreach (ISimulable sim in this[x, y])
+                    yield return sim;
+    }
+
     internal bool CreateSim(ISimulable sim) {
         (int x, int y) = sim.Position;
         if (!WithinBounds(x, y))
