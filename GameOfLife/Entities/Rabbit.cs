@@ -10,6 +10,8 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
     
     public readonly int NutritionalValue = 3;
     private List<ISimulable> _neighbours = new();
+    public MatingPair<Rabbit> matingPair;
+    private bool _hasMatingPartner = false;
     public (int x, int y) Position { get; set; } = (0, 0);
     public (int x, int y)? NextPosition { get; set; }
     
@@ -19,11 +21,11 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         Age = 0;
     }
 
-    public Rabbit(int posX, int posY) 
+    public Rabbit((int posX, int posY) position) 
     {
         Hp = 5;
         Age = 0;
-        Position = (posX, posY);
+        Position = position;
     }
 
     void ISimulable.Update(Grid grid) 
@@ -43,14 +45,31 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         Hp--;
     }
 
-    bool ISimulable.ShouldCreateDescendant(Grid grid) 
+    bool ISimulable.ShouldCreateDescendant(Grid grid)
     {
-        return false;
+        var rabbits = _neighbours.Where(x => x is Rabbit).ToList();
+        if (!HasMatingPartner() || !_neighbours.Any(x => x is Rabbit) && rabbits.Count < 2)
+        {
+            _hasMatingPartner = false;
+            return _hasMatingPartner;
+        }
+
+        var rabbit = (Rabbit)rabbits.OrderBy(x => x).First();
+        
+        matingPair = new MatingPair<Rabbit>(this, rabbit);
+        _hasMatingPartner = true;
+
+        return _hasMatingPartner;
     }
-    
-    ISimulable ISimulable.NewDescendant(Grid grid) 
+
+    private bool HasMatingPartner()
     {
-        throw new NotImplementedException();
+        return _hasMatingPartner;
+    }
+
+    ISimulable ISimulable.NewDescendant(Grid grid)
+    {
+        return new Rabbit(Position);
     }
     
     bool ISimulable.ShouldDie() 
@@ -60,24 +79,32 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
 
     private bool CanMove() 
     {
-        return _neighbours.Count == 0 || !_neighbours.Any(x => x is Fox);
+        return !_neighbours.Any(x => x is Fox) && !_hasMatingPartner;
     }
 
     private void Move(Grid grid) {
+        
+        
         //Move randomly if hp is full
         if (!ShouldEat() && CanMove()) 
         {
             MoveRandomly(grid);
             return;
         }
-
-        //Move to the next grass to eat else stays, preference by nutritional value
-        if (ShouldEat() && CanMove() && _neighbours.Any(x => x is Grass)) 
+        
+        //If has mating partner
+        if (_hasMatingPartner)
         {
-            Position = _neighbours
-                .Where(x => x is Grass)
-                .OrderByDescending(y => (Grass?)y)
-                .FirstOrDefault(x => x is Grass)?.Position ?? Position;
+            MoveRandomly(grid);
+            matingPair.MatingPair2.NextPosition = Position;
+            return;
+        }
+        
+        //Move to the next grass to eat else stays, preference by nutritional value
+        var grasses = grid.SimsOfTypeInRadius<Grass>(Position.x, Position.y, 1).OrderByDescending(y => y).ToList();
+        if (ShouldEat() && CanMove() && grasses.Count > 0)
+        {
+            NextPosition = grasses.First().Position;
         }
     }
 
