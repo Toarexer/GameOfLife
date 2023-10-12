@@ -55,7 +55,7 @@ public class Fox : Animal, ISimulable
     
     bool ISimulable.ShouldDie()
     {
-        return Hp == 0;
+        return Hp < 1;
     }
 
     bool ISimulable.ShouldCreateDescendant(Grid grid)
