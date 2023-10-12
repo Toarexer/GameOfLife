@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameOfLife.GameLogic;
+namespace GameOfLifeSim;
 
 public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     public class GridEnumerator : IEnumerator<IReadOnlyList<ISimulable>> {
@@ -30,6 +30,9 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
 
     internal Grid(int width, int height) {
         _cells = new List<ISimulable>[width, height];
+        for (int y = 0; y < Height; y++)
+            for (int x = 0; x < Width; x++)
+                _cells[x, y] = new();
     }
 
     public IEnumerator<IReadOnlyList<ISimulable>> GetEnumerator() => new GridEnumerator(this);

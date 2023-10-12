@@ -1,4 +1,4 @@
-namespace GameOfLife.GameLogic;
+namespace GameOfLifeSim;
 
 public interface ISimulable {
     /// <summary>The current position of the Sim.</summary>
