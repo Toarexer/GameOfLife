@@ -38,24 +38,24 @@ public class GameManager {
 
     private void MoveSims() {
         for (int y = 0; y < Grid.Height; y++)
-            for (int x = 0; x < Grid.Width; x++)
-                foreach (ISimulable sim in Grid[x, y].Where(sim => sim.NextPosition is not null)) {
-                    Grid.MoveSim(sim, sim.NextPosition!.Value.x, sim.NextPosition!.Value.y);
+            for (int x = 0; x < Grid.Width; x++) {
+                List<ISimulable> moving = Grid[x, y].Where(sim => sim.NextPosition is not null).ToList();
+
+                foreach (ISimulable sim in moving)
+                    Grid.RemoveSim(sim);
+
+                foreach (ISimulable sim in moving) {
+                    Grid.CreateSim(sim, sim.NextPosition!.Value.x, sim.NextPosition!.Value.y);
                     sim.NextPosition = null;
                 }
+            }
     }
 
     public void Update() {
-        try {
-            UpdateSims();
-            KillSims();
-            ReproduceSims();
-            MoveSims();
-        }
-        catch (Exception e) {
-            // Temporary solution
-            Console.Error.WriteLine(e);
-        }
+        UpdateSims();
+        KillSims();
+        ReproduceSims();
+        MoveSims();
     }
 
     public async Task Run(CancellationToken ctoken, int msInterval = 1000, int times = 0) {

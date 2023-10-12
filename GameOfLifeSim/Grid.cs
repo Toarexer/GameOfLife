@@ -75,17 +75,12 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         _cells[x, y].Add(sim);
         return true;
     }
-
-    internal bool MoveSim(ISimulable sim, int x, int y) {
+    
+    internal bool CreateSim(ISimulable sim, int x, int y) {
         if (!WithinBounds(x, y))
             return false;
 
-        (int ox, int oy) = sim.Position;
-        sim.Position = (x, y);
-
-        _cells[ox, oy].Remove(sim);
         _cells[x, y].Add(sim);
-
         return true;
     }
 
