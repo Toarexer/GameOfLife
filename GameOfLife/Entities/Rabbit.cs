@@ -1,117 +1,125 @@
 using GameOfLife.Entities.Interfaces;
-using GameOfLife.GameLogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
 
 public class Rabbit : Animal, ISimulable, ICanBeEaten {
+    
     public readonly int NutritionalValue = 3;
-    private List<ISimulable?> _neighbours = new();
-
-    (int x, int y) _position { get; set; } = (0, 0);
-    (int x, int y)? _nextposition { get; set; }
-
-    (int x, int y) ISimulable.Position { get => _position; set => _position = value; }
-    (int x, int y)? ISimulable.NextPosition { get => _nextposition; set => _nextposition = value; }
-
-    public Rabbit() {
+    private List<ISimulable> _neighbours = new();
+    public (int x, int y) Position { get; set; } = (0, 0);
+    public (int x, int y)? NextPosition { get; set; }
+    
+    public Rabbit() 
+    {
         Hp = 5;
         Age = 0;
     }
 
-    public Rabbit(int posX, int posY) {
+    public Rabbit(int posX, int posY) 
+    {
         Hp = 5;
         Age = 0;
-        _position = (posX, posY);
+        Position = (posX, posY);
     }
 
-    void ISimulable.Update(Grid grid) {
-        _neighbours = GetAllNeighbours(grid);
+    void ISimulable.Update(Grid grid) 
+    {
+        _neighbours = grid.SimsInRadius(Position.x, Position.y, 2).ToList();
         Move(grid);
-        Eat((Grass?)_neighbours.FirstOrDefault(x => x is Grass));
+        if (_neighbours.Any(x => x is Grass))
+        {
+            Grass grass = (Grass)_neighbours
+                .Where(x => x is Grass)
+                .OrderByDescending(x => x)
+                .First();
+            
+            Eat(grass);
+        }
         IncreaseAge(1);
         Hp--;
     }
 
-    bool ISimulable.ShouldCreateDescendant(Grid grid) {
+    bool ISimulable.ShouldCreateDescendant(Grid grid) 
+    {
         return false;
     }
-
-    bool ISimulable.ShouldDie() {
-        return Hp < 1 || CanBeEaten();
+    
+    ISimulable ISimulable.NewDescendant(Grid grid) 
+    {
+        throw new NotImplementedException();
+    }
+    
+    bool ISimulable.ShouldDie() 
+    {
+        return Hp < 1;
     }
 
-    private List<ISimulable?> GetAllNeighbours(Grid grid) {
-        var entities = new List<ISimulable?>();
-
-        for (int i = -2; i < 3; i++)
-            for (int j = -2; j < 3; j++) {
-                entities.Add(grid.SimsOfType<Grass>(_position.x + i, _position.y + j).FirstOrDefault());
-                entities.Add(grid.SimsOfType<Fox>(_position.x + i, _position.y + j).FirstOrDefault());
-                entities.Add(grid.SimsOfType<Rabbit>(_position.x + i, _position.y + j).FirstOrDefault());
-            }
-
-        return entities;
-    }
-
-    private bool CanMove() {
+    private bool CanMove() 
+    {
         return _neighbours.Count == 0 || !_neighbours.Any(x => x is Fox);
     }
 
     private void Move(Grid grid) {
         //Move randomly if hp is full
-        if (!ShouldEat() && CanMove()) {
+        if (!ShouldEat() && CanMove()) 
+        {
             MoveRandomly(grid);
             return;
         }
 
         //Move to the next grass to eat else stays, preference by nutritional value
-        if (ShouldEat() && CanMove() && _neighbours.Any(x => x is Grass)) {
-            _position = _neighbours
+        if (ShouldEat() && CanMove() && _neighbours.Any(x => x is Grass)) 
+        {
+            Position = _neighbours
                 .Where(x => x is Grass)
                 .OrderByDescending(y => (Grass?)y)
-                .FirstOrDefault(x => x is Grass)?.Position ?? _position;
+                .FirstOrDefault(x => x is Grass)?.Position ?? Position;
         }
     }
 
-    private void MoveRandomly(Grid grid) {
+    private void MoveRandomly(Grid grid) 
+    {
         var r = new Random();
         int nextX;
         int nextY;
 
         do {
-            nextX = _position.x + r.Next(-1, 2);
-            nextY = _position.y + r.Next(-1, 2);
+            nextX = Position.x + r.Next(-1, 2);
+            nextY = Position.y + r.Next(-1, 2);
         }
         while (!grid.WithinBounds(nextX, nextY));
 
-        _position = (nextX, nextY);
+        NextPosition = (nextX, nextY);
     }
 
-    private bool ShouldEat() {
+    private bool ShouldEat() 
+    {
         return Hp < 5;
     }
-
-    public void Eat(Grass? grass) {
-        if (ShouldEat() && grass != null) {
+    
+    public void Eat(Grass grass) 
+    {
+        if (ShouldEat() || ((int)grass.GetState() + Hp <= 5))
+        {
+            NextPosition = grass.Position;
             Hp += grass.GetEaten();
-        }
+        } 
     }
 
-    public bool CanBeEaten() {
+    public bool CanBeEaten() 
+    {
         //If the predator is on current position, it can be eaten
         return _neighbours.Any(x => x is Fox);
     }
-
-    public void GetEaten() {
-        if (!CanBeEaten()) return;
-        var fox = (Fox)_neighbours.FirstOrDefault(x => x is Fox)!;
-        fox.Eat(this);
-    }
-
-    ISimulable ISimulable.NewDescendant(Grid grid) {
-        throw new NotImplementedException();
+    
+    public int GetEaten()
+    {
+        if (!CanBeEaten()) return 0;
+        Hp = 0;
+        return NutritionalValue;
     }
 }

@@ -1,19 +1,17 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameOfLife.Entities.Interfaces;
-using GameOfLife.GameLogic;
+using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
 
 public class Grass : ISimulable, ICanSpread, IComparable<Grass>
 {
     //public readonly int NutritionalValue = 2;
-    private List<ISimulable?> _neighbours = new();
+    private List<Rabbit> _neighbours = new();
 
-    (int x, int y) _position { get; set; } = (0, 0);
-    (int x, int y)? _nextposition { get; set; }
-
-    (int x, int y) ISimulable.Position { get => _position; set => _position = value; }
-    (int x, int y)? ISimulable.NextPosition { get => _nextposition; set => _nextposition = value; }
+    public (int x, int y) Position { get; set; } = (0, 0);
 
     private int Hp { get; set; }
     private int Age { get; set; }
@@ -38,24 +36,13 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
         Position = (posX, posY);
     }
     
-    public override void Update(Grid grid)
+    void ISimulable.Update(Grid grid)
     {
-        _neighbours = GetAllNeighbours(grid);   
+        //TODO It should say to rabbits that it could be eaten no matter the distance
+        _neighbours = grid.SimsOfTypeInRadius<Rabbit>(Position.x,Position.y, 2).ToList();
+        
     }
-    private List<ISimulable?> GetAllNeighbours(Grid grid)
-    {
-        var entities = new List<ISimulable?>();
-
-        for (int i = -2; i < 3; i++)
-            for (int j = -2; j < 3; j++)
-            {
-                entities.Add(grid.SimsOfType<Grass>(_position.x + i, _position.y + j).FirstOrDefault());
-                entities.Add(grid.SimsOfType<Fox>(_position.x + i, _position.y + j).FirstOrDefault());
-                entities.Add(grid.SimsOfType<Rabbit>(_position.x + i, _position.y + j).FirstOrDefault());
-            }
-
-        return entities;
-    }
+    
 
     public bool CanBeEaten()
     {
@@ -70,7 +57,6 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
         {
             Hp = (int)GetState() - 1;
         }
-
         return tempHp;
     }
 
@@ -84,8 +70,6 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
     {
         return Hp.CompareTo(grass?.Hp);
     }
-
-    
 
     public bool CanSpread()
     {

@@ -1,7 +1,7 @@
-using GameOfLife.GameLogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
 
