@@ -11,8 +11,8 @@ class DummyPair {
 }
 
 class Dummy : ISimulable {
-    public (int x, int y) Position { get; set; } = (0, 0);
-    public (int x, int y)? NextPosition { get; set; } = null;
+    public GridPosition Position { get; set; } = GridPosition.Zero;
+    public GridPosition? NextPosition { get; set; }
 
     public int Health { get; set; } = 100;
     public bool CanMate { get; set; } = false;
@@ -25,7 +25,7 @@ class Dummy : ISimulable {
         }
 
         if (CanMate && Mating is null) {
-            IEnumerable<Dummy> sims = grid.SimsOfTypeInRadius<Dummy>(Position.x, Position.y, 2)
+            IEnumerable<Dummy> sims = grid.SimsOfTypeInRadius<Dummy>(Position.X, Position.Y, 2)
                 .Except(this)
                 .Where(x => x.CanMate && x.Mating is null);
 

@@ -40,7 +40,7 @@ public class GameManager {
         for (int y = 0; y < Grid.Height; y++)
             for (int x = 0; x < Grid.Width; x++)
                 foreach (ISimulable sim in Grid[x, y].Where(sim => sim.NextPosition is not null).ToArray()) {
-                    Grid.MoveSim(sim, sim.NextPosition!.Value.x, sim.NextPosition!.Value.y);
+                    Grid.MoveSim(sim, sim.NextPosition!.X, sim.NextPosition!.Y);
                     sim.NextPosition = null;
                 }
     }

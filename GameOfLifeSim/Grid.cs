@@ -41,6 +41,8 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
 
     public bool WithinBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 
+    public bool WithinBounds(GridPosition p) => WithinBounds(p.X, p.Y);
+
     public IReadOnlyList<ISimulable> this[int x, int y] {
         get {
             if (WithinBounds(x, y))
@@ -68,11 +70,11 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     }
 
     internal bool CreateSim(ISimulable sim) {
-        (int x, int y) = sim.Position;
-        if (!WithinBounds(x, y))
+        GridPosition p = sim.Position;
+        if (!WithinBounds(p))
             return false;
 
-        _cells[x, y].Add(sim);
+        _cells[p.X, p.Y].Add(sim);
         return true;
     }
 
@@ -80,21 +82,20 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         if (!WithinBounds(x, y))
             return false;
 
-        (int ox, int oy) = sim.Position;
-        sim.Position = (x, y);
+        GridPosition origin = sim.Position;
+        sim.Position = new(x, y);
 
-        _cells[ox, oy].Remove(sim);
+        _cells[origin.X, origin.Y].Remove(sim);
         _cells[x, y].Add(sim);
 
         return true;
     }
 
     internal bool RemoveSim(ISimulable sim) {
-        (int x, int y) = sim.Position;
-        if (!WithinBounds(x, y))
+        if (!WithinBounds(sim.Position))
             return false;
 
-        _cells[x, y].Remove(sim);
+        _cells[sim.Position.X, sim.Position.Y].Remove(sim);
         return true;
     }
 }
