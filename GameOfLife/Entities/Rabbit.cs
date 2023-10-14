@@ -12,8 +12,8 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
     private List<ISimulable> _neighbours = new();
     public MatingPair<Rabbit> matingPair;
     private bool _hasMatingPartner = false;
-    public (int x, int y) Position { get; set; } = (0, 0);
-    public (int x, int y)? NextPosition { get; set; }
+    public GridPosition Position { get; set; }
+    public GridPosition? NextPosition { get; set; }
     
     public Rabbit() 
     {
@@ -21,7 +21,7 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         Age = 0;
     }
 
-    public Rabbit((int posX, int posY) position) 
+    public Rabbit(GridPosition position) 
     {
         Hp = 5;
         Age = 0;
@@ -30,7 +30,7 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
 
     void ISimulable.Update(Grid grid) 
     {
-        _neighbours = grid.SimsInRadius(Position.x, Position.y, 2).ToList();
+        _neighbours = grid.SimsInRadius(Position.X, Position.Y, 2).ToList();
         Move(grid);
         if (_neighbours.Any(x => x is Grass))
         {
@@ -101,7 +101,7 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         }
         
         //Move to the next grass to eat else stays, preference by nutritional value
-        var grasses = grid.SimsOfTypeInRadius<Grass>(Position.x, Position.y, 1).OrderByDescending(y => y).ToList();
+        var grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 1).OrderByDescending(y => y).ToList();
         if (ShouldEat() && CanMove() && grasses.Count > 0)
         {
             NextPosition = grasses.First().Position;
@@ -115,12 +115,12 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         int nextY;
 
         do {
-            nextX = Position.x + r.Next(-1, 2);
-            nextY = Position.y + r.Next(-1, 2);
+            nextX = Position.X + r.Next(-1, 2);
+            nextY = Position.Y + r.Next(-1, 2);
         }
         while (!grid.WithinBounds(nextX, nextY));
 
-        NextPosition = (nextX, nextY);
+        NextPosition = new(nextX, nextY);
     }
 
     private bool ShouldEat() 
@@ -149,4 +149,6 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         Hp = 0;
         return NutritionalValue;
     }
+
+    public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(150, 150, 100));
 }

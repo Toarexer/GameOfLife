@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\GameOfLifeSim\GameOfLifeSim.csproj" />
+      <ProjectReference Include="..\GameOfLife\GameOfLife.csproj" />
     </ItemGroup>
 
 </Project>

@@ -11,8 +11,8 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
     //public readonly int NutritionalValue = 2;
     private List<Rabbit> _neighbours = new();
 
-    public (int x, int y) Position { get; set; } = (0, 0);
-    public (int x, int y)? NextPosition { get; set; }
+    public GridPosition Position { get; set; }
+    public GridPosition? NextPosition { get; set; }
 
     private int Hp { get; set; }
     private int Age { get; set; }
@@ -33,13 +33,13 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
     {
         Hp = (int)State.Seed;
         Age = 0;
-        Position = (posX, posY);
+        Position = new(posX, posY);
     }
     
     void ISimulable.Update(Grid grid)
     {
         //TODO It should say to rabbits that it could be eaten no matter the distance
-        _neighbours = grid.SimsOfTypeInRadius<Rabbit>(Position.x,Position.y, 2).ToList();
+        _neighbours = grid.SimsOfTypeInRadius<Rabbit>(Position.X,Position.Y, 2).ToList();
         
     }
 
@@ -94,4 +94,6 @@ public class Grass : ISimulable, ICanSpread, IComparable<Grass>
     {
         throw new NotImplementedException();
     }
+    
+    public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(0, 255, 0));
 }
