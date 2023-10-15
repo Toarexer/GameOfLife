@@ -10,11 +10,14 @@ namespace GameOfLifeApp {
             public Sim.GameManager GameManager { get; }
 
             private readonly Gtk.Paned _hPaned = new(Gtk.Orientation.Horizontal);
-            private readonly Gtk.Paned _vPaned = new(Gtk.Orientation.Vertical);
+            private readonly Gtk.Paned _lvPaned = new(Gtk.Orientation.Vertical);
             private readonly Gtk.ScrolledWindow _typeListScroll = new();
             private readonly Gtk.ListBox _typeList = new();
             private readonly Gtk.ListBox _btnList = new();
+            private readonly Gtk.Paned _rvPaned = new(Gtk.Orientation.Vertical);
             private readonly Gtk.DrawingArea _area = new();
+            private readonly Gtk.ScrolledWindow _errorListScroll = new();
+            private readonly Gtk.ListBox _errorList = new();
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
                 DefaultSize = new(840, 740);
@@ -27,36 +30,45 @@ namespace GameOfLifeApp {
                         _typeList.Remove(child);
                     foreach (var i in info) {
                         Gtk.Label label = new(i.Name);
-                        label.ModifyFg(Gtk.StateType.Normal, ColorFromRGB(i.Color.R, i.Color.G, i.Color.B));
+                        label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color((byte)i.Color.R, (byte)i.Color.G, (byte)i.Color.B));
                         _typeList.Add(label);
                     }
+
                     _typeList.ShowAll();
                 };
 
-                _hPaned.Add1(_vPaned);
-                _hPaned.Add2(_area);
+                _hPaned.Add1(_lvPaned);
+                _hPaned.Add2(_rvPaned);
                 _hPaned.Child1.WidthRequest = 200;
 
                 _typeListScroll.Add(_typeList);
-                
-                _vPaned.Add1(_typeListScroll);
-                _vPaned.Add2(_btnList);
 
-                foreach (Gtk.Button btn in CreateButtons())
-                    _btnList.Add(btn);
-                
+                _lvPaned.Pack1(_typeListScroll, true, false);
+                _lvPaned.Pack2(_btnList, false, false);
+
+                _errorListScroll.Add(_errorList);
+                _errorListScroll.HeightRequest = 100;
+
+                _rvPaned.Pack1(_area, true, false);
+                _rvPaned.Pack2(_errorListScroll, false, false);
+
+                foreach (Gtk.Widget widget in CreateButtons())
+                    _btnList.Add(widget);
+
                 _area.Drawn += DrawGrid;
-                
+
                 Add(_hPaned);
             }
 
-            private IEnumerable<Gtk.Button> CreateButtons() {
+            private IEnumerable<Gtk.Widget> CreateButtons() {
+                yield return new Gtk.Separator(Gtk.Orientation.Horizontal);
+                
                 Gtk.Button stepButton = new() { Label = "Step" };
-                stepButton.Clicked += (_, _) => GameManager.Update();
+                stepButton.Clicked += (_, _) => ExceptionHandler(() => GameManager.Update());
                 yield return stepButton;
 
                 Gtk.Button exitButton = new() { Label = "Exit" };
-                exitButton.Clicked += (_, _) => Environment.Exit(0);
+                exitButton.Clicked += (_, _) => Destroy();
                 yield return exitButton;
             }
 
@@ -91,6 +103,18 @@ namespace GameOfLifeApp {
 
             private Gdk.Color ColorFromRGB(int r, int g, int b) {
                 return new Gdk.Color { Red = (ushort)(r << 8), Green = (ushort)(g << 8), Blue = (ushort)(b << 8) };
+            }
+
+            private void ExceptionHandler(Action action) {
+                try {
+                    action();
+                }
+                catch (Exception e) {
+                    Gtk.Label label = new(e.ToString());
+                    label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
+                    label.Show();
+                    _errorList.Add(label);
+                }
             }
         }
 
