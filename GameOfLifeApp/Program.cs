@@ -9,8 +9,10 @@ namespace GameOfLifeApp {
         class GameManagerWindow : Gtk.Window {
             public Sim.GameManager GameManager { get; }
 
-            private readonly Gtk.Paned _paned = new(Gtk.Orientation.Horizontal);
-            private readonly Gtk.ListBox _list = new();
+            private readonly Gtk.Paned _hPaned = new(Gtk.Orientation.Horizontal);
+            private readonly Gtk.Paned _vPaned = new(Gtk.Orientation.Vertical);
+            private readonly Gtk.ListBox _typeList = new();
+            private readonly Gtk.ListBox _btnList = new();
             private readonly Gtk.DrawingArea _area = new();
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
@@ -20,23 +22,39 @@ namespace GameOfLifeApp {
                 Destroyed += (_, _) => Environment.Exit(0);
                 Drawn += (_, _) => {
                     IEnumerable<Sim.DisplayInfo> info = gm.Grid.SelectMany(x => x.Select(y => y.Info())).Distinct();
-                    foreach (var child in _list.Children)
-                        _list.Remove(child);
+                    foreach (var child in _typeList.Children)
+                        _typeList.Remove(child);
                     foreach (var i in info) {
                         Gtk.Label label = new(i.Name);
                         label.ModifyFg(Gtk.StateType.Normal, ColorFromRGB(i.Color.R, i.Color.G, i.Color.B));
-                        _list.Add(label);
+                        _typeList.Add(label);
                     }
-                    _list.ShowAll();
+                    _typeList.ShowAll();
                 };
 
+                _hPaned.Add1(_vPaned);
+                _hPaned.Add2(_area);
+                _hPaned.Child1.WidthRequest = 200;
+                
+                _vPaned.Add1(_typeList);
+                _vPaned.Add2(_btnList);
+
+                foreach (Gtk.Button btn in CreateButtons())
+                    _btnList.Add(btn);
+                
                 _area.Drawn += DrawGrid;
+                
+                Add(_hPaned);
+            }
 
-                _paned.Add1(_list);
-                _paned.Add2(_area);
-                _paned.Child1.WidthRequest = 200;
+            private IEnumerable<Gtk.Button> CreateButtons() {
+                Gtk.Button stepButton = new() { Label = "Step" };
+                stepButton.Clicked += (_, _) => GameManager.Update();
+                yield return stepButton;
 
-                Add(_paned);
+                Gtk.Button exitButton = new() { Label = "Exit" };
+                exitButton.Clicked += (_, _) => Environment.Exit(0);
+                yield return exitButton;
             }
 
             private void DrawGrid(object sender, Gtk.DrawnArgs args) {

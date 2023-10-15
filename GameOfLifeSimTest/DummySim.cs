@@ -40,11 +40,9 @@ class Dummy : ISimulable {
         return Health <= 0;
     }
 
-    bool ISimulable.ShouldCreateDescendant(Grid grid) {
-        return CanMate && Mating is not null && Mating.First == this && Position == Mating.Second.Position;
-    }
-
-    ISimulable ISimulable.NewDescendant(Grid grid) {
+    ISimulable? ISimulable.NewDescendant(Grid grid) {
+        if (CanMate && Mating is not null && Mating.First == this && Position == Mating.Second.Position)
+            return null;
         CanMate = false;
         return new Dummy { Position = Position };
     }

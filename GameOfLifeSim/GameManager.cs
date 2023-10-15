@@ -32,8 +32,8 @@ public class GameManager {
     private void ReproduceSims() {
         for (int y = 0; y < Grid.Height; y++)
             for (int x = 0; x < Grid.Width; x++)
-                foreach (ISimulable sim in Grid[x, y].Where(sim => sim.ShouldCreateDescendant(Grid)))
-                    Grid.CreateSim(sim.NewDescendant(Grid));
+                foreach (ISimulable sim in Grid[x, y].Select(sim => sim.NewDescendant(Grid)).NotNull())
+                    Grid.CreateSim(sim);
     }
 
     private void MoveSims() {
