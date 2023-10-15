@@ -6,21 +6,31 @@ using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
 
-public class Rabbit : Animal, ISimulable, ICanBeEaten {
-    
-    public readonly int NutritionalValue = 3;
+/// <summary>
+/// Represents a rabbit, a type of animal in the simulation.
+/// </summary>
+public class Rabbit : Animal, ISimulable
+{
+    private const int NutritionalValue = 3;
     private List<ISimulable> _neighbours = new();
-    public MatingPair<Rabbit> matingPair;
-    private bool _hasMatingPartner = false;
-    public GridPosition Position { get; set; }
-    public GridPosition? NextPosition { get; set; }
-    
-    public Rabbit() 
-    {
-        Hp = 5;
-        Age = 0;
-    }
+    public MatingPair<Rabbit>? MatingPair;
+    private bool _hasMatingPartner;
 
+    /// <summary>
+    /// Gets or sets the position of the rabbit on the simulation grid.
+    /// </summary>
+    public GridPosition Position { get; set; }
+
+    /// <summary>
+    /// Gets or sets the next position of the rabbit, used for movement.
+    /// </summary>
+    public GridPosition? NextPosition { get; set; }
+
+    /// <summary>
+    /// Constructor for a Rabbit with an initial position.
+    /// Initializes HP and Age properties, and sets the initial position.
+    /// </summary>
+    /// <param name="position">The initial position of the rabbit.</param>
     public Rabbit(GridPosition position) 
     {
         Hp = 5;
@@ -56,7 +66,7 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
 
         var rabbit = (Rabbit)rabbits.OrderBy(x => x).First();
         
-        matingPair = new MatingPair<Rabbit>(this, rabbit);
+        MatingPair = new MatingPair<Rabbit>(this, rabbit);
         _hasMatingPartner = true;
 
         return _hasMatingPartner;
@@ -84,7 +94,6 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
 
     private void Move(Grid grid) {
         
-        
         //Move randomly if hp is full
         if (!ShouldEat() && CanMove()) 
         {
@@ -96,7 +105,7 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         if (_hasMatingPartner)
         {
             MoveRandomly(grid);
-            matingPair.MatingPair2.NextPosition = Position;
+            MatingPair!.MatingPair2.NextPosition = Position;
             return;
         }
         
@@ -128,27 +137,42 @@ public class Rabbit : Animal, ISimulable, ICanBeEaten {
         return Hp < 5;
     }
     
+    /// <summary>
+    /// Attempts to eat a grass object, increasing the rabbit's HP.
+    /// </summary>
+    /// <param name="grass">The grass object to eat.</param>
     public void Eat(Grass grass) 
     {
-        if (ShouldEat() || ((int)grass.GetState() + Hp <= 5))
+        if (ShouldEat() || ((int)grass.Age + Hp <= 5))
         {
             NextPosition = grass.Position;
             Hp += grass.GetEaten();
         } 
     }
-
+    
+    /// <summary>
+    /// Determines if the rabbit can be eaten by a predator (Fox).
+    /// </summary>
+    /// <returns>True if the rabbit can be eaten; otherwise, false.</returns>
     public bool CanBeEaten() 
     {
-        //If the predator is on current position, it can be eaten
         return _neighbours.Any(x => x is Fox);
     }
     
+    /// <summary>
+    /// Provides the nutritional value of the rabbit and sets its HP to 0 when eaten.
+    /// </summary>
+    /// <returns>The nutritional value of the rabbit.</returns>
     public int GetEaten()
     {
         if (!CanBeEaten()) return 0;
         Hp = 0;
         return NutritionalValue;
     }
-
+    
+    /// <summary>
+    /// Provides display information for the grass, including its type and color.
+    /// </summary>
+    /// <returns>A `DisplayInfo` object containing type information and a color (gray).</returns>
     public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(150, 150, 100));
 }
