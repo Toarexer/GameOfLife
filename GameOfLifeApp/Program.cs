@@ -1,4 +1,3 @@
-using Entities = GameOfLife.Entities;
 using Sim = GameOfLifeSim;
 using System;
 using System.Collections.Generic;
@@ -64,7 +63,10 @@ namespace GameOfLifeApp {
                 yield return new Gtk.Separator(Gtk.Orientation.Horizontal);
                 
                 Gtk.Button stepButton = new() { Label = "Step" };
-                stepButton.Clicked += (_, _) => ExceptionHandler(() => GameManager.Update());
+                stepButton.Clicked += (_, _) => {
+                    ExceptionHandler(() => GameManager.Update());
+                    _area.QueueDraw();
+                };
                 yield return stepButton;
 
                 Gtk.Button exitButton = new() { Label = "Exit" };
@@ -99,10 +101,6 @@ namespace GameOfLifeApp {
                             context.Fill();
                         }
                     }
-            }
-
-            private Gdk.Color ColorFromRGB(int r, int g, int b) {
-                return new Gdk.Color { Red = (ushort)(r << 8), Green = (ushort)(g << 8), Blue = (ushort)(b << 8) };
             }
 
             private void ExceptionHandler(Action action) {
