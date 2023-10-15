@@ -63,7 +63,10 @@ namespace GameOfLifeApp {
                 yield return new Gtk.Separator(Gtk.Orientation.Horizontal);
                 
                 Gtk.Button stepButton = new() { Label = "Step" };
-                stepButton.Clicked += (_, _) => ExceptionHandler(() => GameManager.Update());
+                stepButton.Clicked += (_, _) => {
+                    ExceptionHandler(() => GameManager.Update());
+                    _area.QueueDraw();
+                };
                 yield return stepButton;
 
                 Gtk.Button exitButton = new() { Label = "Exit" };
