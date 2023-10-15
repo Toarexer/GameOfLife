@@ -55,7 +55,7 @@ public class Rabbit : Animal, ISimulable
         Hp--;
     }
 
-    bool ISimulable.ShouldCreateDescendant(Grid grid)
+    bool ShouldCreateDescendant(Grid grid)
     {
         var rabbits = _neighbours.Where(x => x is Rabbit).ToList();
         if (!HasMatingPartner() || !_neighbours.Any(x => x is Rabbit) && rabbits.Count < 2)
@@ -77,11 +77,12 @@ public class Rabbit : Animal, ISimulable
         return _hasMatingPartner;
     }
 
-    ISimulable ISimulable.NewDescendant(Grid grid)
-    {
-        return new Rabbit(Position);
+    ISimulable? ISimulable.NewDescendant(Grid grid) {
+        if (ShouldCreateDescendant(grid))
+            return new Rabbit(Position);
+        return null;
     }
-    
+
     bool ISimulable.ShouldDie() 
     {
         return Hp < 1;

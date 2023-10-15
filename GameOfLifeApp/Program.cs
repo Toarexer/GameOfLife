@@ -11,12 +11,13 @@ namespace GameOfLifeApp {
 
             private readonly Gtk.Paned _hPaned = new(Gtk.Orientation.Horizontal);
             private readonly Gtk.Paned _vPaned = new(Gtk.Orientation.Vertical);
+            private readonly Gtk.ScrolledWindow _typeListScroll = new();
             private readonly Gtk.ListBox _typeList = new();
             private readonly Gtk.ListBox _btnList = new();
             private readonly Gtk.DrawingArea _area = new();
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
-                DefaultSize = new(840, 640);
+                DefaultSize = new(840, 740);
                 Title = title;
                 GameManager = gm;
                 Destroyed += (_, _) => Environment.Exit(0);
@@ -35,8 +36,10 @@ namespace GameOfLifeApp {
                 _hPaned.Add1(_vPaned);
                 _hPaned.Add2(_area);
                 _hPaned.Child1.WidthRequest = 200;
+
+                _typeListScroll.Add(_typeList);
                 
-                _vPaned.Add1(_typeList);
+                _vPaned.Add1(_typeListScroll);
                 _vPaned.Add2(_btnList);
 
                 foreach (Gtk.Button btn in CreateButtons())

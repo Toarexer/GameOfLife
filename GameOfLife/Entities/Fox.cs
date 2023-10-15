@@ -84,7 +84,7 @@ public class Fox : Animal, ISimulable {
     /// </summary>
     /// <param name="grid">The simulation grid.</param>
     /// <returns>True if the fox should create a descendant; otherwise, false.</returns>
-    bool ISimulable.ShouldCreateDescendant(Grid grid) {
+    bool ShouldCreateDescendant(Grid grid) {
         return _foxes.Any();
     }
 
@@ -93,8 +93,10 @@ public class Fox : Animal, ISimulable {
     /// </summary>
     /// <param name="grid">The simulation grid.</param>
     /// <returns>A new instance of the Fox class as a descendant.</returns>
-    ISimulable ISimulable.NewDescendant(Grid grid) {
-        return new Fox(Position);
+    ISimulable? ISimulable.NewDescendant(Grid grid) {
+        if (ShouldCreateDescendant(grid))
+            return new Fox(Position);
+        return null;
     }
 
     /// <summary>
