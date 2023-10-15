@@ -7,11 +7,11 @@ namespace GameOfLife.Entities
 {
     /// <summary>
     /// Represents a type of vegetation, which can be consumed by herbivorous animals.
-    /// Implements: ISimulable, ICanSpread, IComparable&lt;Grass&gt;
+    /// Implements: ISimulable, IComparable
     /// </summary>
     public class Grass : ISimulable, IComparable<Grass>
     {
-        private int Hp { get; set; }
+        public int Hp { get; set; }
         private int _age;
         public State Age
         {
@@ -23,7 +23,6 @@ namespace GameOfLife.Entities
             } 
             private set => _age = (int)value;
         }
-        private List<ISimulable> _neighbours = new();
 
         /// <summary>
         /// Gets or sets the position of the grass on the simulation grid.
@@ -59,7 +58,7 @@ namespace GameOfLife.Entities
         void ISimulable.Update(Grid grid)
         {
             // TODO: It should signal to rabbits that it could be eaten no matter the distance.
-            _neighbours = grid.SimsInRadius(Position.X, Position.Y, 1).ToList();
+            
             Age++;
         }
 
@@ -73,31 +72,51 @@ namespace GameOfLife.Entities
         }
 
         /// <summary>
-        /// Determines if the grass should create descendants. Not implemented.
+        /// Determines whether a new descendant (Grass) can be created.
+        /// A new descendant is only created when the grass's state is not Seed and conditions are met.
         /// </summary>
         /// <param name="grid">The simulation grid.</param>
-        /// <returns>False, as the creation of descendants is not implemented.</returns>
-        public bool ShouldCreateDescendant(Grid grid)
+        /// <returns>A new descendant (Grass) if the conditions are met; otherwise, null.</returns>
+        public ISimulable? NewDescendant(Grid grid)
         {
-            return Age != State.Seed && _neighbours.Count == 0;
-        }
-
-        /// <summary>
-        /// Creates a new grass object as a descendant. Not implemented.
-        /// </summary>
-        /// <param name="grid">The simulation grid.</param>
-        /// <returns>Null, as the creation of descendants is not implemented.</returns>
-        public ISimulable NewDescendant(Grid grid)
-        {
+            if (Age == State.Seed)
+            {
+                return null;
+            }
             
-            return new Grass(Position);
+            var top = new GridPosition(Position.X, Position.Y + 1);
+            var right = new GridPosition(Position.X + 1, Position.Y);
+            var bottom = new GridPosition(Position.X, Position.Y - 1);
+            var left = new GridPosition(Position.X - 1, Position.Y - 1);
+            
+            if (grid.WithinBounds(top) && grid[top.X, top.Y].Count == 0)
+            {
+                return new Grass(top);
+            }
+
+            if (grid.WithinBounds(right) && grid[right.X, right.Y].Count == 0)
+            {
+                return new Grass(right);
+            }
+            
+            if (grid.WithinBounds(bottom) && grid[bottom.X, bottom.Y].Count == 0)
+            {
+                return new Grass(bottom);
+            }
+            
+            if (grid.WithinBounds(left) && grid[left.X, left.Y].Count == 0)
+            {
+                return new Grass(left);
+            }
+
+            return null;
         }
 
         /// <summary>
         /// Checks if the grass can be eaten, which depends on its state.
         /// </summary>
         /// <returns>True if the grass can be eaten; otherwise, false.</returns>
-        private bool CanBeEaten()
+        public bool CanBeEaten()
         {
             // If it is in a state of Seed, it cannot be eaten.
             return Age != State.Seed;
@@ -118,26 +137,26 @@ namespace GameOfLife.Entities
         }
 
         /// <summary>
-        /// Gets the current state of the grass.
-        /// </summary>
-        /// <returns>The state of the grass, represented by the State enum.</returns>
-
-        /// <summary>
-        /// Compares this grass object to another based on its HP (state).
+        /// Compares this grass object to another based on its Age (state).
         /// </summary>
         /// <param name="grass">The grass object to compare to.</param>
         /// <returns>
-        /// -1 if this grass has lower HP, 0 if HP is equal, and 1 if this grass has higher HP.
+        /// -1 if this grass has a lower Age, 0 if Ages are equal, and 1 if this grass has a higher Age.
         /// </returns>
         public int CompareTo(Grass? grass)
         {
-            return Hp.CompareTo(grass?.Hp);
+            return Age.CompareTo(grass?.Age);
         }
 
         /// <summary>
         /// Provides display information for the grass, including its type and color.
         /// </summary>
-        /// <returns>A `DisplayInfo` object containing type information and a color (green).</returns>
+        /// <returns>A DisplayInfo object containing type information and a color (green).</returns>
         public DisplayInfo Info() => new DisplayInfo(GetType().FullName ?? GetType().Name, new (0, 255, 0));
+
+        public override string ToString()
+        {
+            return $"Grass: x: {Position.X} y: {Position.Y}; Age: {(int)Age}; State: {Age}";
+        }
     }
 }

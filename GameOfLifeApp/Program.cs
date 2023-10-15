@@ -121,6 +121,7 @@ namespace GameOfLifeApp {
         [STAThread]
         static void Main() {
             Sim.GameManager gm = new(32, 32);
+            /*
             gm.AddSims(new Entities.Fox(new Sim.GridPosition(7, 0)));
             gm.AddSims(new Entities.Fox(new Sim.GridPosition(3, 3)));
             gm.AddSims(new Entities.Fox(new Sim.GridPosition(31, 8)));
@@ -139,10 +140,20 @@ namespace GameOfLifeApp {
             gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 18)));
             gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 17)));
             gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 18)));
+            */
             
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(13, 13)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(13, 13)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(13, 13)));
+            //gm.AddSims(new Entities.Grass(new Sim.GridPosition(13, 13)));
+            //gm.AddSims(new Entities.Fox(new Sim.GridPosition(13, 13)));
+            
+            //gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 4)));
+            //gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(14, 14)));
+            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(4, 10)));
+            gm.AddSims(new Entities.Grass(new Sim.GridPosition(14, 15)));
+            
+            /*
+            gm.AddSims(new Entities.Grass(new Sim.GridPosition(15, 14)));
+            gm.AddSims(new Entities.Grass(new Sim.GridPosition(15, 15)));
+            */
 
             Gtk.Application.Init();
             new GameManagerWindow("Rabbits and Foxes", gm).ShowAll();

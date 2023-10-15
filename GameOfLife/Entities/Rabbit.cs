@@ -1,4 +1,3 @@
-using GameOfLife.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,15 +43,14 @@ public class Rabbit : Animal, ISimulable
         Move(grid);
         if (_neighbours.Any(x => x is Grass))
         {
-            Grass grass = (Grass)_neighbours
+            var grass = _neighbours
                 .Where(x => x is Grass)
-                .OrderByDescending(x => x)
-                .First();
-            
-            Eat(grass);
+                .OrderByDescending(x => x);
+            //Console.WriteLine(string.Join("\n", grass));
+            //Eat(grass);
         }
         IncreaseAge(1);
-        Hp--;
+        //Hp--;
     }
 
     bool ShouldCreateDescendant(Grid grid)
@@ -76,7 +74,12 @@ public class Rabbit : Animal, ISimulable
     {
         return _hasMatingPartner;
     }
-
+    /// <summary>
+    /// Determines whether a new descendant (Rabbit) can be created by the rabbit.
+    /// A new descendant is only created when the rabbit has reached a certain age and conditions are met.
+    /// </summary>
+    /// <param name="grid">The simulation grid.</param>
+    /// <returns>A new descendant (Rabbit) if the conditions are met; otherwise, null.</returns>
     ISimulable? ISimulable.NewDescendant(Grid grid) {
         if (ShouldCreateDescendant(grid))
             return new Rabbit(Position);
