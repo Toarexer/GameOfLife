@@ -1,4 +1,3 @@
-using Entities = GameOfLife.Entities;
 using Sim = GameOfLifeSim;
 using System;
 using System.Collections.Generic;
@@ -101,10 +100,6 @@ namespace GameOfLifeApp {
                     }
             }
 
-            private Gdk.Color ColorFromRGB(int r, int g, int b) {
-                return new Gdk.Color { Red = (ushort)(r << 8), Green = (ushort)(g << 8), Blue = (ushort)(b << 8) };
-            }
-
             private void ExceptionHandler(Action action) {
                 try {
                     action();
@@ -121,28 +116,7 @@ namespace GameOfLifeApp {
         [STAThread]
         static void Main() {
             Sim.GameManager gm = new(32, 32);
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(7, 0)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(31, 8)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(31, 31)));
-            
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(17, 17)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(18, 16)));
-            
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 4)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(4, 3)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(16, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 16)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 18)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 18)));
-            
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(13, 13)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(13, 13)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(13, 13)));
+            gm.AddSims(Temp.Sims());
 
             Gtk.Application.Init();
             new GameManagerWindow("Rabbits and Foxes", gm).ShowAll();
