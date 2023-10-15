@@ -1,10 +1,19 @@
 namespace GameOfLife.Entities.Interfaces;
 
+/// <summary>
+/// Interface for objects that can age and track their age.
+/// </summary>
 public interface ICanAge
 {
-    //returns the age
+    /// <summary>
+    /// Gets the current age of the object.
+    /// </summary>
+    /// <returns>The age of the object as an integer.</returns>
     int GetAge();
-    
-    //Increases age by a integer unit
+
+    /// <summary>
+    /// Increases the age of the object by a specified unit.
+    /// </summary>
+    /// <param name="unit">The amount by which to increase the age.</param>
     void IncreaseAge(int unit);
 }

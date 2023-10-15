@@ -5,24 +5,26 @@ using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
 
-/// <summary>Fox class, inherits Animal, implements ISimulable interface.</summary>
+/// <summary>
+/// Fox class, inherits Animal, implements ISimulable interface.
+/// </summary>
 public class Fox : Animal, ISimulable {
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
 
-    /// <summary>Gets or sets the position of the fox as a tuple (x, y).</summary>
+    /// <summary>
+    /// Gets or sets the position of the fox as a tuple (x, y).
+    /// </summary>
     public GridPosition Position { get; set; }
 
-    /// <summary>Gets or sets the next position of the fox as an optional tuple (x, y).</summary>
+    /// <summary>
+    /// Gets or sets the next position of the fox as an optional tuple (x, y).
+    /// </summary>
     public GridPosition? NextPosition { get; set; }
-
-    /// <summary>Default constructor for a Fox. Initializes HP and Age properties.</summary>
-    public Fox() {
-        Hp = 10;
-        Age = 0;
-    }
-
-    /// <summary>Constructor for a Fox with an initial position. Initializes HP and Age properties.</summary>
+    
+    /// <summary>
+    /// Constructor for a Fox with an initial position. Initializes HP and Age properties.
+    /// </summary>
     /// <param name="position">The initial position of the fox.</param>
     public Fox(GridPosition position) {
         Hp = 10;
@@ -45,7 +47,9 @@ public class Fox : Animal, ISimulable {
         Hp--;
     }
 
-    /// <summary>Attempts to eat a rabbit if conditions allow.</summary>
+    /// <summary>
+    /// Attempts to eat a rabbit if conditions allow.
+    /// </summary>
     /// <param name="rabbit">The rabbit to eat.</param>
     /// <returns>True if the fox successfully eats the rabbit; otherwise, false.</returns>
     public bool Eat(Rabbit rabbit) {
@@ -59,33 +63,43 @@ public class Fox : Animal, ISimulable {
         return true;
     }
 
-    /// <summary>Checks if the fox should eat based on its HP.</summary>
+    /// <summary>
+    /// Checks if the fox should eat based on its HP.
+    /// </summary>
     /// <returns>True if the fox should eat; otherwise, false.</returns>
     private bool ShouldEat() {
         return Hp <= 7;
     }
 
-    /// <summary>Determines if the fox should die based on its HP.</summary>
+    /// <summary>
+    /// Determines if the fox should die based on its HP.
+    /// </summary>
     /// <returns>True if the fox should die; otherwise, false.</returns>
     bool ISimulable.ShouldDie() {
         return Hp < 1;
     }
 
-    /// <summary>Checks if the fox should create a descendant based on the presence of other foxes.</summary>
+    /// <summary>
+    /// Checks if the fox should create a descendant based on the presence of other foxes.
+    /// </summary>
     /// <param name="grid">The simulation grid.</param>
     /// <returns>True if the fox should create a descendant; otherwise, false.</returns>
     bool ISimulable.ShouldCreateDescendant(Grid grid) {
         return _foxes.Any();
     }
 
-    /// <summary>Creates a new fox as a descendant. </summary>
+    /// <summary>
+    /// Creates a new fox as a descendant.
+    /// </summary>
     /// <param name="grid">The simulation grid.</param>
     /// <returns>A new instance of the Fox class as a descendant.</returns>
     ISimulable ISimulable.NewDescendant(Grid grid) {
         return new Fox(Position);
     }
 
-    /// <summary>Moves the fox, either randomly or towards a nearby rabbit if it should eat.</summary>
+    /// <summary>
+    /// Moves the fox, either randomly or towards a nearby rabbit if it should eat.
+    /// </summary>
     /// <param name="grid">The simulation grid.</param>
     private void Move(Grid grid) {
         if (!ShouldEat()) {
@@ -98,7 +112,9 @@ public class Fox : Animal, ISimulable {
         }
     }
 
-    /// <summary>Moves the fox to a random adjacent position.</summary>
+    /// <summary>
+    /// Moves the fox to a random adjacent position.
+    /// </summary>
     /// <param name="grid">The simulation grid.</param>
     private void MoveRandomly(Grid grid) {
         var r = new Random();
@@ -112,6 +128,10 @@ public class Fox : Animal, ISimulable {
 
         NextPosition = new(nextX, nextY);
     }
-
+    
+    /// <summary>
+    /// Provides display information for the grass, including its type and color.
+    /// </summary>
+    /// <returns>A `DisplayInfo` object containing type information and a color (orange).</returns>
     public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(255, 127, 0));
 }
