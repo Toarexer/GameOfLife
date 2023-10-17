@@ -8,13 +8,12 @@ namespace GameOfLife.Entities
     /// An abstract class for any animal.
     /// Implements: ICanMove, ICanBreed, ICanAge
     /// </summary>
-    public abstract class Animal : ISimulable
+    public abstract class Animal
     {
         private int _invincibility;
         private int _matingCooldown;
         
         protected bool HasMatingPartner;
-        public MatingPair<Rabbit>? MatingPair;
         public GridPosition Position { get; set; }
         public GridPosition? NextPosition { get; set; }
         

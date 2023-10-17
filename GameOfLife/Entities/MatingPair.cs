@@ -6,7 +6,7 @@ namespace GameOfLife.Entities
     /// A class to form mating pairs for T animals.
     /// </summary>
     /// <typeparam name="T">The type of objects that can form mating pairs.</typeparam>
-    public class MatingPair<T> where T : ISimulable
+    public class MatingPair<T> where T : Animal
     {
         /// <summary>
         /// The first member of the mating pair.

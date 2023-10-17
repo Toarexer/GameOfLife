@@ -8,7 +8,7 @@ namespace GameOfLife.Entities;
 /// <summary>
 /// Represents a fox, a type of animal in the simulation.
 /// </summary>
-public class Fox : Animal {
+public class Fox : Animal, ISimulable {
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
     

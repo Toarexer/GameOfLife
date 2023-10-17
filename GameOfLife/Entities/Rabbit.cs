@@ -8,8 +8,9 @@ namespace GameOfLife.Entities;
 /// <summary>
 /// Represents a rabbit, a type of animal in the simulation.
 /// </summary>
-public class Rabbit : Animal, IComparable<Rabbit>
-{
+public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
+    public MatingPair<Rabbit>? MatingPair;
+        
     private const int NutritionalValue = 3;
     private List<Grass> _grasses = new();
     private List<Rabbit> _rabbits = new();
@@ -51,14 +52,13 @@ public class Rabbit : Animal, IComparable<Rabbit>
         }
 
         var rabbit = _rabbits.OrderBy(x => x).First();
-        
+
         MatingPair = new MatingPair<Rabbit>(this, rabbit);
         MatingPair.MatingPair1.HasMatingPartner = true;
         //MatingPair.MatingPair2.HasMatingPartner = true;
         
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
-    
 
     public override ISimulable? NewDescendant(Grid grid) {
         if (!ShouldCreateDescendant()) return null;
