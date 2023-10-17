@@ -6,21 +6,11 @@ using GameOfLifeSim;
 namespace GameOfLife.Entities;
 
 /// <summary>
-/// Fox class, inherits Animal, implements ISimulable interface.
+/// Represents a fox, a type of animal in the simulation.
 /// </summary>
 public class Fox : Animal {
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
-
-    /// <summary>
-    /// Gets or sets the position of the fox as a tuple (x, y).
-    /// </summary>
-    public GridPosition Position { get; set; }
-
-    /// <summary>
-    /// Gets or sets the next position of the fox as an optional tuple (x, y).
-    /// </summary>
-    public GridPosition? NextPosition { get; set; }
     
     /// <summary>
     /// Constructor for a Fox with an initial position. Initializes HP and Age properties.
@@ -30,13 +20,10 @@ public class Fox : Animal {
         Hp = 10;
         Age = 0;
         Position = position;
+        Invincibility = 3;
+        MatingCooldown = 3;
     }
 
-    /// <summary>
-    /// Updates the state of a simulable object during a simulation step.
-    /// This method is called once per simulation step to update the behavior of the object.
-    /// </summary>
-    /// <param name="grid">The simulation grid in which the object resides.</param>
     public override void Update(Grid grid) {
         _rabbits = new List<Rabbit>(grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2));
         _foxes = new List<Fox>(grid.SimsOfTypeInRadius<Fox>(Position.X, Position.Y, 2));
@@ -62,45 +49,25 @@ public class Fox : Animal {
         NextPosition = rabbit.Position;
     }
 
-    /// <summary>
-    /// Checks if the fox should eat based on its HP.
-    /// </summary>
-    /// <returns>True if the fox should eat; otherwise, false.</returns>
+
     protected override bool ShouldEat() {
         return Hp < 8;
     }
 
-    /// <summary>
-    /// Determines if the fox should die based on its HP.
-    /// </summary>
-    /// <returns>True if the fox should die; otherwise, false.</returns>
     public override bool ShouldDie() {
         return Hp < 1;
     }
 
-    /// <summary>
-    /// Checks if the fox should create a descendant based on the presence of other foxes.
-    /// </summary>
-    /// <returns>True if the fox should create a descendant; otherwise, false.</returns>
     protected override bool ShouldCreateDescendant() {
         return _foxes.Any();
     }
 
-    /// <summary>
-    /// Creates a new fox as a descendant.
-    /// </summary>
-    /// <param name="grid">The simulation grid.</param>
-    /// <returns>A new instance of the Fox class as a descendant.</returns>
     public override ISimulable? NewDescendant(Grid grid) {
         if (ShouldCreateDescendant())
             return new Fox(Position);
         return null;
     }
 
-    /// <summary>
-    /// Moves the fox, either randomly or towards a nearby rabbit if it should eat.
-    /// </summary>
-    /// <param name="grid">The simulation grid.</param>
     protected override void Move(Grid grid) {
         if (!ShouldEat()) {
             MoveRandomly(grid);

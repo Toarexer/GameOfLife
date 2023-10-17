@@ -18,10 +18,14 @@ namespace GameOfLife.Entities
         public GridPosition Position { get; set; }
         public GridPosition? NextPosition { get; set; }
         
-        /// <summary>HP (Hit points) will determine if the animal needs to eat or should die.</summary>
+        /// <summary>
+        /// HP (Hit points) will determine if the animal needs to eat or should die.
+        /// </summary>
         public int Hp { get; protected set; }
 
-        /// <summary>Age determines if the animal can breed or can be eaten.</summary>
+        /// <summary>
+        /// Age determines if the animal can breed or can be eaten.
+        /// </summary>
         protected int Age { get; set; }
 
         protected int Invincibility
@@ -46,15 +50,18 @@ namespace GameOfLife.Entities
         public void IncreaseAge(int unit)
         {
             Age += unit;
-            //Hp--;
+            Hp--;
             Invincibility--;
             MatingCooldown--;
         }
 
+        /// <summary>
+        /// Checks if the animal should eat based on its HP.
+        /// </summary>
+        /// <returns>True if the animal should eat; otherwise, false.</returns>
         protected abstract bool ShouldEat();
         protected abstract bool ShouldCreateDescendant();
         protected abstract void Move(Grid grid);
-
         protected void MoveRandomly(Grid grid)
         {
             Random rnd = new();
@@ -68,7 +75,6 @@ namespace GameOfLife.Entities
 
             NextPosition = new(nextX, nextY);
         }
-        
         public abstract void Update(Grid grid);
         public abstract bool ShouldDie();
         public abstract ISimulable? NewDescendant(Grid grid);

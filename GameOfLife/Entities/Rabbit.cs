@@ -59,12 +59,7 @@ public class Rabbit : Animal, IComparable<Rabbit>
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
     
-    /// <summary>
-    /// Determines whether a new descendant (Rabbit) can be created by the rabbit.
-    /// A new descendant is only created when the rabbit has reached a certain age and conditions are met.
-    /// </summary>
-    /// <param name="grid">The simulation grid.</param>
-    /// <returns>A new descendant (Rabbit) if the conditions are met; otherwise, null.</returns>
+
     public override ISimulable? NewDescendant(Grid grid) {
         if (!ShouldCreateDescendant()) return null;
 
@@ -113,7 +108,6 @@ public class Rabbit : Animal, IComparable<Rabbit>
     /// </summary>
     public void Eat() 
     {
-        //grasses.Count > 0 && grasses.First().Age != Grass.State.Seed
         if (_grasses.Count < 1 || HasMatingPartner) return;
         if (ShouldEat())
         {
