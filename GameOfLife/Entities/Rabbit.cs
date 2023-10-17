@@ -44,7 +44,7 @@ public class Rabbit : Animal, IComparable<Rabbit>
 
     protected override bool ShouldCreateDescendant()
     {
-        if (!HasMatingPartner && _rabbits.Count < 1 && Invincibility > 0 && MatingCooldown == 0)
+        if (!HasMatingPartner || _rabbits.Count < 1 || Invincibility > 0 || MatingCooldown > 0)
         {
             HasMatingPartner = false;
             return HasMatingPartner;
@@ -53,8 +53,8 @@ public class Rabbit : Animal, IComparable<Rabbit>
         var rabbit = _rabbits.OrderBy(x => x).First();
         
         MatingPair = new MatingPair<Rabbit>(this, rabbit);
-        MatingPair.MatingPair2.HasMatingPartner = true;
         MatingPair.MatingPair1.HasMatingPartner = true;
+        //MatingPair.MatingPair2.HasMatingPartner = true;
         
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
