@@ -111,7 +111,6 @@ namespace GameOfLife.Entities
             Hp = (int)Age;
             if (Hp < 1) return 0;
             Age--;
-            Console.WriteLine($"{this} was eaten");
             return Hp;
         }
 
