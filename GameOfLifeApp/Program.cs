@@ -1,10 +1,8 @@
-using Entities = GameOfLife.Entities;
 using Sim = GameOfLifeSim;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace GameOfLifeApp {
     static class App {
