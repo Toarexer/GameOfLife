@@ -9,10 +9,11 @@ namespace GameOfLife.Entities
     /// Represents a type of vegetation, which can be consumed by herbivorous animals.
     /// Implements: ISimulable, IComparable
     /// </summary>
-    public class Grass : ISimulable, IComparable<Grass>
+    public class Grass : ISimulable, IComparable<Grass?>
     {
         public int Hp { get; set; }
         private int _age;
+        private int _offsprings;
         public State Age
         {
             get
@@ -51,8 +52,10 @@ namespace GameOfLife.Entities
         /// <param name="position">The initial position of the grass.</param>
         public Grass(GridPosition position)
         {
+            _age = 0;
             Hp = (int)Age;
             Position = position;
+            _offsprings = 0;
         }
 
         void ISimulable.Update(Grid grid)
@@ -79,47 +82,24 @@ namespace GameOfLife.Entities
         /// <returns>A new descendant (Grass) if the conditions are met; otherwise, null.</returns>
         public ISimulable? NewDescendant(Grid grid)
         {
-            if (Age == State.Seed)
-            {
-                return null;
-            }
+            if (Age == State.Seed || _offsprings > 1) return null;
+            _offsprings++;
+            
+            Random rnd = new();
+            var whereCanISpread = new List<GridPosition>();
             
             var top = new GridPosition(Position.X, Position.Y + 1);
             var right = new GridPosition(Position.X + 1, Position.Y);
             var bottom = new GridPosition(Position.X, Position.Y - 1);
             var left = new GridPosition(Position.X - 1, Position.Y - 1);
             
-            if (grid.WithinBounds(top) && grid[top.X, top.Y].Count == 0)
-            {
-                return new Grass(top);
-            }
-
-            if (grid.WithinBounds(right) && grid[right.X, right.Y].Count == 0)
-            {
-                return new Grass(right);
-            }
+            if (grid.WithinBounds(top) && grid[top.X, top.Y].Count == 0) whereCanISpread.Add(top);
+            if (grid.WithinBounds(right) && grid[right.X, right.Y].Count == 0) whereCanISpread.Add(right);
+            if (grid.WithinBounds(bottom) && grid[bottom.X, bottom.Y].Count == 0) whereCanISpread.Add(bottom);
+            if (grid.WithinBounds(left) && grid[left.X, left.Y].Count == 0) whereCanISpread.Add(left);
             
-            if (grid.WithinBounds(bottom) && grid[bottom.X, bottom.Y].Count == 0)
-            {
-                return new Grass(bottom);
-            }
-            
-            if (grid.WithinBounds(left) && grid[left.X, left.Y].Count == 0)
-            {
-                return new Grass(left);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Checks if the grass can be eaten, which depends on its state.
-        /// </summary>
-        /// <returns>True if the grass can be eaten; otherwise, false.</returns>
-        public bool CanBeEaten()
-        {
-            // If it is in a state of Seed, it cannot be eaten.
-            return Age != State.Seed;
+            if (whereCanISpread.Count == 0) return null;
+            return new Grass(whereCanISpread.ElementAt(rnd.Next(0, whereCanISpread.Count)));
         }
 
         /// <summary>
@@ -129,10 +109,9 @@ namespace GameOfLife.Entities
         public int GetEaten()
         {
             Hp = (int)Age;
-            if (CanBeEaten())
-            {
-                Age--;
-            }
+            if (Hp < 1) return 0;
+            Age--;
+            Console.WriteLine($"{this} was eaten");
             return Hp;
         }
 
@@ -145,7 +124,8 @@ namespace GameOfLife.Entities
         /// </returns>
         public int CompareTo(Grass? grass)
         {
-            return Age.CompareTo(grass?.Age);
+            if (grass == null) return 0;
+            return Age.CompareTo(grass.Age);
         }
 
         /// <summary>
@@ -156,7 +136,7 @@ namespace GameOfLife.Entities
 
         public override string ToString()
         {
-            return $"Grass: x: {Position.X} y: {Position.Y}; Age: {(int)Age}; State: {Age}";
+            return $"Grass: x: {Position.X} y: {Position.Y}; Age: {(int)Age}; State: {Age} Offsprings: {_offsprings}";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace GameOfLife.Entities;
 /// <summary>
 /// Represents a rabbit, a type of animal in the simulation.
 /// </summary>
-public class Rabbit : Animal, ISimulable
+public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 {
     private const int NutritionalValue = 3;
     private List<ISimulable> _neighbours = new();
@@ -39,18 +39,15 @@ public class Rabbit : Animal, ISimulable
 
     void ISimulable.Update(Grid grid) 
     {
-        _neighbours = grid.SimsInRadius(Position.X, Position.Y, 2).ToList();
+        List<Grass> grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 2).OrderDescending().ToList();
+        List<Rabbit> rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).OrderDescending().ToList();
+        
         Move(grid);
-        if (_neighbours.Any(x => x is Grass))
-        {
-            var grass = _neighbours
-                .Where(x => x is Grass)
-                .OrderByDescending(x => x);
-            //Console.WriteLine(string.Join("\n", grass));
-            //Eat(grass);
-        }
+        Hp--;
+        Eat(grasses);
+        
         IncreaseAge(1);
-        //Hp--;
+        
     }
 
     bool ShouldCreateDescendant(Grid grid)
@@ -97,9 +94,7 @@ public class Rabbit : Animal, ISimulable
     }
 
     private void Move(Grid grid) {
-        
-        //Move randomly if hp is full
-        if (!ShouldEat() && CanMove()) 
+        if (!ShouldEat() || CanMove()) 
         {
             MoveRandomly(grid);
             return;
@@ -145,12 +140,22 @@ public class Rabbit : Animal, ISimulable
     /// Attempts to eat a grass object, increasing the rabbit's HP.
     /// </summary>
     /// <param name="grass">The grass object to eat.</param>
-    public void Eat(Grass grass) 
+    public void Eat(List<Grass> grasses) 
     {
-        if (ShouldEat() || ((int)grass.Age + Hp <= 5))
+        //grasses.Count > 0 && grasses.First().Age != Grass.State.Seed
+        if (grasses.Count < 1) return;
+        if (ShouldEat())
         {
-            NextPosition = grass.Position;
-            Hp += grass.GetEaten();
+            Random rnd = new();
+            
+            Grass[] optimalGrasses = grasses.Where(x => (int)x.Age + this.Hp == 5).ToArray();
+            if (optimalGrasses.Length < 1) return;
+            
+            Grass grassToEat = optimalGrasses[rnd.Next(0, optimalGrasses.Length)];
+            
+            NextPosition = grassToEat.Position;
+            Hp += grassToEat.GetEaten();
+            Console.WriteLine($"{this}; Ate: {grassToEat}");
         } 
     }
     
@@ -179,4 +184,14 @@ public class Rabbit : Animal, ISimulable
     /// </summary>
     /// <returns>A `DisplayInfo` object containing type information and a color (gray).</returns>
     public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(150, 150, 100));
+
+    public int CompareTo(Rabbit? other)
+    {
+        return Age.CompareTo(other?.Age);
+    }
+
+    public override string ToString()
+    {
+        return $"Rabbit: x: {Position.X} y: {Position.Y} Hp: {Hp} Age: {Age} HasPair? {_hasMatingPartner}";
+    }
 }
