@@ -5,6 +5,5 @@ bin/
 obj/
 TestResults/
 
-*.temp.cs
 *.user
 

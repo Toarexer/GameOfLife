@@ -1,7 +1,10 @@
+using Entities = GameOfLife.Entities;
 using Sim = GameOfLifeSim;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace GameOfLifeApp {
     static class App {
@@ -63,10 +66,7 @@ namespace GameOfLifeApp {
                 yield return new Gtk.Separator(Gtk.Orientation.Horizontal);
                 
                 Gtk.Button stepButton = new() { Label = "Step" };
-                stepButton.Clicked += (_, _) => {
-                    ExceptionHandler(() => GameManager.Update());
-                    _area.QueueDraw();
-                };
+                stepButton.Clicked += (_, _) => UpdateArea();
                 yield return stepButton;
 
                 Gtk.Button exitButton = new() { Label = "Exit" };
@@ -103,55 +103,54 @@ namespace GameOfLifeApp {
                     }
             }
 
-            private void ExceptionHandler(Action action) {
-                try {
-                    action();
-                }
-                catch (Exception e) {
-                    Gtk.Label label = new(e.ToString());
-                    label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
-                    label.Show();
-                    _errorList.Add(label);
-                }
+            private void UpdateArea() {
+                GameManager.Update(ExceptionHandler);
+                _area.QueueDraw();
+            }
+            
+            private void ExceptionHandler(Exception e) {
+                Gtk.Label label = new(e.ToString());
+                label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
+                label.Show();
+                _errorList.Add(label);
             }
         }
 
+        static Sim.GameManager LoadGrid(string file) {
+            IEnumerable<string> lines = File.ReadLines(file);
+
+            string[] size = lines.First().Split('x');
+            Sim.GameManager gm = new(int.Parse(size[0]), int.Parse(size[1]));
+
+            foreach (string line in lines.Skip(1)) {
+                try {
+                    string[] data = line.Split(',');
+
+                    Type type = Type.GetType($"GameOfLife.Entities.{data[0]}, GameOfLife");
+                    Sim.GridPosition pos = new(int.Parse(data[1]), int.Parse(data[2]));
+
+                    object obj = Activator.CreateInstance(type, pos);
+                    if (obj is Sim.ISimulable sim)
+                        gm.AddSims(sim);
+                }
+                catch (Exception e) {
+                    Console.Error.WriteLine(e);
+                }
+            }
+
+            return gm;
+        }
+
         [STAThread]
-        static void Main() {
-            Sim.GameManager gm = new(32, 32);
-            /*
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(7, 0)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(31, 8)));
-            gm.AddSims(new Entities.Fox(new Sim.GridPosition(31, 31)));
-            
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(17, 17)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(18, 16)));
-            
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 3)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 4)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(4, 3)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(16, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 16)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(17, 18)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 17)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(18, 18)));
-            */
-            
-            //gm.AddSims(new Entities.Grass(new Sim.GridPosition(13, 13)));
-            //gm.AddSims(new Entities.Fox(new Sim.GridPosition(13, 13)));
-            
-            //gm.AddSims(new Entities.Grass(new Sim.GridPosition(3, 4)));
-            //gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(14, 14)));
-            gm.AddSims(new Entities.Rabbit(new Sim.GridPosition(4, 10)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(14, 15)));
-            
-            /*
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(15, 14)));
-            gm.AddSims(new Entities.Grass(new Sim.GridPosition(15, 15)));
-            */
+        static void Main(string[] args) {
+            Sim.GameManager gm;
+            try {
+                gm = LoadGrid("grid.csv");
+            }
+            catch (Exception) {
+                gm = new(32, 32);
+                gm.AddSims(Temp.Sims());
+            }
 
             Gtk.Application.Init();
             new GameManagerWindow("Rabbits and Foxes", gm).ShowAll();

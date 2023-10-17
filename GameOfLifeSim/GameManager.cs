@@ -52,22 +52,12 @@ public class GameManager {
         MoveSims();
     }
 
-    public async Task Run(CancellationToken ctoken, int msInterval = 1000, int times = 0) {
+    public void Update(Action<Exception> exceptionHandler) {
         try {
-            if (times == 0)
-                while (!ctoken.IsCancellationRequested) {
-                    Update();
-                    await Task.Delay(msInterval, ctoken);
-                }
-            else
-                for (int i = 0; i < times; i++) {
-                    if (ctoken.IsCancellationRequested)
-                        break;
-                    Update();
-                    await Task.Delay(msInterval, ctoken);
-                }
+            Update();
         }
-        catch (TaskCanceledException) {
+        catch (Exception e) {
+            exceptionHandler(e);
         }
     }
 
