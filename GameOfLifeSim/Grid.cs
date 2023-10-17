@@ -27,12 +27,15 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
 
     public int Width => _cells.GetLength(0);
     public int Height => _cells.GetLength(1);
+    
+    public int CellCapacity { get; }
 
-    internal Grid(int width, int height) {
+    internal Grid(int width, int height, int cellcap) {
         _cells = new List<ISimulable>[width, height];
         for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
                 _cells[x, y] = new();
+        CellCapacity = cellcap;
     }
 
     public IEnumerator<IReadOnlyList<ISimulable>> GetEnumerator() => new GridEnumerator(this);
@@ -74,12 +77,18 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         if (!WithinBounds(p))
             return false;
 
+        if (_cells[p.X, p.Y].Count >= CellCapacity)
+            return false;
+        
         _cells[p.X, p.Y].Add(sim);
         return true;
     }
 
     internal bool MoveSim(ISimulable sim, int x, int y) {
         if (!WithinBounds(x, y))
+            return false;
+
+        if (_cells[x, y].Count >= CellCapacity)
             return false;
 
         GridPosition origin = sim.Position;

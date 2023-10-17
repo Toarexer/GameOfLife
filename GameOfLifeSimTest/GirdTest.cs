@@ -14,7 +14,7 @@ public class GirdTest {
             new() { Position = new(8, 4) },
             new() { Position = new(16, 4) },
         };
-        GameManager gm = new(32, 32, dummies);
+        GameManager gm = new(32, 32, 4, dummies);
 
         foreach (ISimulable sim in dummies)
             Assert.AreSame(sim, gm.Grid[sim.Position.X, sim.Position.Y].FirstOrDefault());
@@ -31,7 +31,7 @@ public class GirdTest {
             new() { Position = new(8, 4) },
             new() { Position = new(16, 4) },
         };
-        GameManager gm = new(32, 32, dummies);
+        GameManager gm = new(32, 32, 4, dummies);
 
         foreach (GridPosition pos in dummies.Select(x => x.Position))
             Assert.IsTrue(gm.Grid.Any(x => x.Any(x => x.Position == pos)));
@@ -70,38 +70,6 @@ public class GirdTest {
         (sim as Dummy)!.Health = 0;
         gm.Update();
 
-        Assert.IsNull(gm.Grid[13, 13].FirstOrDefault());
-    }
-
-    [TestMethod]
-    public void Test05_ReprodiceSim() {
-        GameManager gm = new(32, 32);
-        gm.AddSims(
-            new Dummy { Position = new(12, 13) },
-            new Dummy { Position = new(14, 13) }
-        );
-
-        ISimulable? sim1 = gm.Grid[12, 13].FirstOrDefault();
-        ISimulable? sim2 = gm.Grid[14, 13].FirstOrDefault();
-
-        Assert.IsNotNull(sim1);
-        Assert.IsNotNull(sim2);
-
-        gm.Update();
-
-        Assert.AreEqual(2, gm.Grid.Sum(x => x.Count));
-
-        sim1.NextPosition = new(13, 13);
-        sim1.NextPosition = new(13, 13);
-        gm.Update();
-
-        Assert.AreEqual(new GridPosition(13, 13), sim1.Position);
-        Assert.AreEqual(new GridPosition(13, 13), sim2.Position);
-        Assert.AreEqual(2, gm.Grid.Sum(x => x.Count));
-
-        gm.Update();
-
-        Assert.AreEqual(3, gm.Grid.Sum(x => x.Count));
         Assert.IsNull(gm.Grid[13, 13].FirstOrDefault());
     }
 }

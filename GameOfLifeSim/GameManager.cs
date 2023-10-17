@@ -3,8 +3,8 @@ namespace GameOfLifeSim;
 public class GameManager {
     public Grid Grid { get; }
 
-    public GameManager(int gridWidth, int gridHeight, params ISimulable[] sims) {
-        Grid = new(gridWidth, gridHeight);
+    public GameManager(int gridWidth, int gridHeight, int cellCapacity = 8, params ISimulable[] sims) {
+        Grid = new(gridWidth, gridHeight, cellCapacity);
         foreach (ISimulable sim in sims)
             Grid.CreateSim(sim);
     }
