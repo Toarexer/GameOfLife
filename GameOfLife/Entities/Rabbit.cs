@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security;
 using GameOfLifeSim;
 
 namespace GameOfLife.Entities;
@@ -9,24 +8,12 @@ namespace GameOfLife.Entities;
 /// <summary>
 /// Represents a rabbit, a type of animal in the simulation.
 /// </summary>
-public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
+public class Rabbit : Animal, IComparable<Rabbit>
 {
     private const int NutritionalValue = 3;
     private List<Grass> _grasses = new();
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
-    public MatingPair<Rabbit>? MatingPair;
-    private bool _hasMatingPartner;
-
-    /// <summary>
-    /// Gets or sets the position of the rabbit on the simulation grid.
-    /// </summary>
-    public GridPosition Position { get; set; }
-
-    /// <summary>
-    /// Gets or sets the next position of the rabbit, used for movement.
-    /// </summary>
-    public GridPosition? NextPosition { get; set; }
 
     /// <summary>
     /// Constructor for a Rabbit with an initial position.
@@ -42,7 +29,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         MatingCooldown = 3;
     }
 
-    void ISimulable.Update(Grid grid) 
+    public override void Update(Grid grid) 
     {
         _grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 2).OrderDescending().ToList();
         _rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).Except(this).Order().ToList();
@@ -55,26 +42,21 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         
     }
 
-    bool ShouldCreateDescendant(Grid grid)
+    protected override bool ShouldCreateDescendant()
     {
-        if (!HasMatingPartner() && _rabbits.Count < 1 && Invincibility > 0 && MatingCooldown == 0)
+        if (!HasMatingPartner && _rabbits.Count < 1 && Invincibility > 0 && MatingCooldown == 0)
         {
-            _hasMatingPartner = false;
-            return _hasMatingPartner;
+            HasMatingPartner = false;
+            return HasMatingPartner;
         }
 
         var rabbit = _rabbits.OrderBy(x => x).First();
         
         MatingPair = new MatingPair<Rabbit>(this, rabbit);
-        MatingPair.MatingPair2._hasMatingPartner = true;
-        MatingPair.MatingPair1._hasMatingPartner = true;
+        MatingPair.MatingPair2.HasMatingPartner = true;
+        MatingPair.MatingPair1.HasMatingPartner = true;
         
-        return _hasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
-    }
-
-    private bool HasMatingPartner()
-    {
-        return _hasMatingPartner;
+        return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
     
     /// <summary>
@@ -83,30 +65,30 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     /// </summary>
     /// <param name="grid">The simulation grid.</param>
     /// <returns>A new descendant (Rabbit) if the conditions are met; otherwise, null.</returns>
-    ISimulable? ISimulable.NewDescendant(Grid grid) {
-        if (!ShouldCreateDescendant(grid)) return null;
+    public override ISimulable? NewDescendant(Grid grid) {
+        if (!ShouldCreateDescendant()) return null;
 
         Console.WriteLine($"Pair1: {MatingPair!.MatingPair1} | Pair2: {MatingPair!.MatingPair2} | New rabbit at: {Position}");
         
-        MatingPair!.MatingPair1._hasMatingPartner = false;
-        MatingPair!.MatingPair2._hasMatingPartner = false;
+        MatingPair!.MatingPair1.HasMatingPartner = false;
+        MatingPair!.MatingPair2.HasMatingPartner = false;
         MatingPair = null;
         MatingCooldown = 3;
         
         return new Rabbit(Position);
     }
 
-    bool ISimulable.ShouldDie() 
+    public override bool ShouldDie() 
     {
         return Hp < 1;
     }
 
     private bool CanMove() 
     {
-        return !_foxes.Any() && !_hasMatingPartner;
+        return !_foxes.Any() && !HasMatingPartner;
     }
 
-    private void Move(Grid grid) {
+    protected override void Move(Grid grid) {
         if (!ShouldEat() || CanMove()) 
         {
             MoveRandomly(grid);
@@ -114,29 +96,14 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         }
         
         //If has mating partner
-        if (_hasMatingPartner)
+        if (HasMatingPartner)
         {
             MoveRandomly(grid);
             MatingPair!.MatingPair2.NextPosition = Position;
         }
     }
 
-    private void MoveRandomly(Grid grid) 
-    {
-        var r = new Random();
-        int nextX;
-        int nextY;
-
-        do {
-            nextX = Position.X + r.Next(-1, 2);
-            nextY = Position.Y + r.Next(-1, 2);
-        }
-        while (!grid.WithinBounds(nextX, nextY));
-
-        NextPosition = new(nextX, nextY);
-    }
-
-    private bool ShouldEat() 
+    protected override bool ShouldEat() 
     {
         return Hp < 5;
     }
@@ -147,7 +114,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     public void Eat() 
     {
         //grasses.Count > 0 && grasses.First().Age != Grass.State.Seed
-        if (_grasses.Count < 1 || _hasMatingPartner) return;
+        if (_grasses.Count < 1 || HasMatingPartner) return;
         if (ShouldEat())
         {
             Random rnd = new();
@@ -195,6 +162,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public override string ToString()
     {
-        return $"Rabbit: x: {Position.X} y: {Position.Y} Hp: {Hp} Invincibility: {Invincibility} HasPair? {_hasMatingPartner}";
+        return $"Rabbit: x: {Position.X} y: {Position.Y} Hp: {Hp} Invincibility: {Invincibility} HasPair? {HasMatingPartner}";
     }
 }
