@@ -59,7 +59,11 @@ namespace GameOfLife.Entities
             _offsprings = 0;
         }
 
-        void ISimulable.Update(Grid grid) => Age++;
+        void ISimulable.Update(Grid grid)
+        { 
+            Age++;  
+            Logger.Info(this.ToString());
+        } 
 
         /// <summary>
         /// Determines if the grass should die. Currently, it always returns false because it can not die.
@@ -96,7 +100,7 @@ namespace GameOfLife.Entities
             _offsprings++;
             
             var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
-            Logger.Info(grassDescendant.ToString());
+            Logger.Info($"New Grass at: {grassDescendant.Position}");
             
             return grassDescendant;
         }
@@ -134,7 +138,7 @@ namespace GameOfLife.Entities
 
         public override string ToString()
         {
-            return $"Grass: x: {Position.X} y: {Position.Y}; Age: {(int)Age}; State: {Age} Offsprings: {_offsprings}";
+            return $"Grass:\t {Position}\t|\tAge: {(int)Age}\t|\tState: {Age}  \t|\tOffsprings: {_offsprings} \t|";
         }
     }
 }

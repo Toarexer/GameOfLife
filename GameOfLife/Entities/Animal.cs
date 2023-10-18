@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using GameOfLifeSim;
 
 namespace GameOfLife.Entities
@@ -14,7 +13,7 @@ namespace GameOfLife.Entities
         private int _matingCooldown;
         
         protected bool HasMatingPartner;
-        public GridPosition Position { get; set; }
+        public GridPosition? Position { get; set; }
         public GridPosition? NextPosition { get; set; }
         
         /// <summary>
@@ -60,6 +59,9 @@ namespace GameOfLife.Entities
         /// <returns>True if the animal should eat; otherwise, false.</returns>
         protected abstract bool ShouldEat();
 
+        /// <summary>
+        /// Attempts to eat an animal if conditions allow.
+        /// </summary>
         protected abstract void Eat();
         protected abstract bool ShouldCreateDescendant();
         protected abstract void Move(Grid grid);
