@@ -1,5 +1,16 @@
 16x16
+Grass,0,0
+Grass,1,1
+Grass,2,2
 Grass,4,4
-Grass,5,4
+Grass,8,8
+Grass,16,16
 Rabbit,5,5
 Rabbit,5,6
+Rabbit,10,5
+Rabbit,5,10
+Rabbit,12,6
+Rabbit,6,12
+Fox,3,3
+Fox,6,6
+Fox,9,9

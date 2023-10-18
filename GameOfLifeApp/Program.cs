@@ -17,19 +17,21 @@ namespace GameOfLifeApp {
             private readonly Gtk.ListBox _btnList = new();
             private readonly Gtk.Paned _rvPaned = new(Gtk.Orientation.Vertical);
             private readonly Gtk.DrawingArea _area = new();
-            private readonly Gtk.Box _logLists = new(Gtk.Orientation.Vertical, 2);
-            private readonly Gtk.StackSwitcher _logSwitcher = new();
+            
             private readonly Gtk.ScrolledWindow _infoListScroll = new();
             private readonly Gtk.ListBox _infoList = new();
             private readonly Gtk.ScrolledWindow _errorListScroll = new();
             private readonly Gtk.ListBox _errorList = new();
-            private readonly Gtk.Label _logCounts = new() { Text = "(0 Info, 0 Errors)" };
+
+            private readonly Gtk.Notebook _logTabs = new();
+            private readonly Gtk.Label _infoTabLabel = new() { Text = "Info (0)" };
+            private readonly Gtk.Label _errorTabLabel = new() { Text = "Errors (0)" };
 
             private int _infoCount = 0;
             private int _errorCount = 0;
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
-                DefaultSize = new(900, 900);
+                DefaultSize = new(940, 940);
                 Title = title;
                 GameManager = gm;
                 Shown += (_, _) => Update(true);
@@ -37,7 +39,7 @@ namespace GameOfLifeApp {
 
                 _hPaned.Add1(_lvPaned);
                 _hPaned.Add2(_rvPaned);
-                _hPaned.Child1.WidthRequest = 200;
+                _hPaned.Child1.WidthRequest = 240;
 
                 _typeListScroll.Add(_typeList);
 
@@ -48,19 +50,12 @@ namespace GameOfLifeApp {
 
                 _errorListScroll.Add(_errorList);
 
-                _logSwitcher.Stack = new();
-                _logSwitcher.Stack.AddTitled(_infoListScroll, "Info", "Info");
-                _logSwitcher.Stack.AddTitled(_errorListScroll, "Errors", "Errors");
-                _logSwitcher.Add(_logCounts);
-
-                _logLists.HeightRequest = 200;
-                _logLists.PackStart(_logSwitcher, false, false, 0);
-                _logLists.PackStart(_logSwitcher.Stack, true, true, 0);
-
-                _logCounts.MarginStart = 10;
-
+                _logTabs.HeightRequest = 240;
+                _logTabs.AppendPage(_infoListScroll, _infoTabLabel);
+                _logTabs.AppendPage(_errorListScroll, _errorTabLabel);
+                
                 _rvPaned.Pack1(_area, true, false);
-                _rvPaned.Pack2(_logLists, false, false);
+                _rvPaned.Pack2(_logTabs, false, false);
 
                 foreach (Gtk.Widget widget in CreateButtons())
                     _btnList.Add(widget);
@@ -150,7 +145,7 @@ namespace GameOfLifeApp {
                     Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
                     label.Show();
                     _infoList.Add(label);
-                    _logCounts.Text = $"({++_infoCount} Info, {_errorCount} Errors)";
+                    _infoTabLabel.Text = $"Info ({++_infoCount})";
                 });
 
                 Logger.ErrorLoggers.Add(msg => {
@@ -158,7 +153,7 @@ namespace GameOfLifeApp {
                     label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
                     label.Show();
                     _errorList.Add(label);
-                    _logCounts.Text = $"({_infoCount} Info, {++_errorCount} Errors)";
+                    _errorTabLabel.Text = $"Errors ({++_errorCount})";
                 });
             }
         }
