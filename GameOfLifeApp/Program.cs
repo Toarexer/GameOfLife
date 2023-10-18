@@ -16,26 +16,19 @@ namespace GameOfLifeApp {
             private readonly Gtk.ListBox _btnList = new();
             private readonly Gtk.Paned _rvPaned = new(Gtk.Orientation.Vertical);
             private readonly Gtk.DrawingArea _area = new();
+            private readonly Gtk.Box _logLists = new(Gtk.Orientation.Vertical, 2);
+            private readonly Gtk.StackSwitcher _logSwitcher = new();
+            private readonly Gtk.ScrolledWindow _infoListScroll = new();
+            private readonly Gtk.ListBox _infoList = new();
             private readonly Gtk.ScrolledWindow _errorListScroll = new();
             private readonly Gtk.ListBox _errorList = new();
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
-                DefaultSize = new(840, 740);
+                DefaultSize = new(900, 900);
                 Title = title;
                 GameManager = gm;
+                Shown += (_, _) => Update(true);
                 Destroyed += (_, _) => Environment.Exit(0);
-                Drawn += (_, _) => {
-                    IEnumerable<Sim.DisplayInfo> info = gm.Grid.SelectMany(x => x.Select(y => y.Info())).Distinct();
-                    foreach (var child in _typeList.Children)
-                        _typeList.Remove(child);
-                    foreach (var i in info) {
-                        Gtk.Label label = new(i.Name);
-                        label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color((byte)i.Color.R, (byte)i.Color.G, (byte)i.Color.B));
-                        _typeList.Add(label);
-                    }
-
-                    _typeList.ShowAll();
-                };
 
                 _hPaned.Add1(_lvPaned);
                 _hPaned.Add2(_rvPaned);
@@ -46,11 +39,20 @@ namespace GameOfLifeApp {
                 _lvPaned.Pack1(_typeListScroll, true, false);
                 _lvPaned.Pack2(_btnList, false, false);
 
+                _infoListScroll.Add(_infoList);
+
                 _errorListScroll.Add(_errorList);
-                _errorListScroll.HeightRequest = 100;
+
+                _logSwitcher.Stack = new();
+                _logSwitcher.Stack.AddTitled(_infoListScroll, "Info", "Info");
+                _logSwitcher.Stack.AddTitled(_errorListScroll, "Error", "Error");
+
+                _logLists.HeightRequest = 200;
+                _logLists.PackStart(_logSwitcher, false, false, 0);
+                _logLists.PackStart(_logSwitcher.Stack, true, true, 0);
 
                 _rvPaned.Pack1(_area, true, false);
-                _rvPaned.Pack2(_errorListScroll, false, false);
+                _rvPaned.Pack2(_logLists, false, false);
 
                 foreach (Gtk.Widget widget in CreateButtons())
                     _btnList.Add(widget);
@@ -58,20 +60,21 @@ namespace GameOfLifeApp {
                 _area.Drawn += DrawGrid;
 
                 Add(_hPaned);
+                SetUpLogging();
             }
 
             private IEnumerable<Gtk.Widget> CreateButtons() {
                 yield return new Gtk.Separator(Gtk.Orientation.Horizontal);
-                
+
                 Gtk.Button stepButton = new() { Label = "Step" };
-                stepButton.Clicked += (_, _) => UpdateArea();
+                stepButton.Clicked += (_, _) => Update();
                 yield return stepButton;
 
                 Gtk.Button exitButton = new() { Label = "Exit" };
                 exitButton.Clicked += (_, _) => Destroy();
                 yield return exitButton;
             }
-
+            
             private void DrawGrid(object sender, Gtk.DrawnArgs args) {
                 Cairo.Context context = args.Cr;
                 context.Scale(_area.AllocatedWidth, _area.AllocatedHeight);
@@ -101,16 +104,37 @@ namespace GameOfLifeApp {
                     }
             }
 
-            private void UpdateArea() {
-                GameManager.Update(ExceptionHandler);
+            private void Update(bool windowOnly = false) {
+                if (!windowOnly)
+                    GameManager.Update();
+
+                var info = GameManager.Grid.SelectMany(x => x.Select(y => y.Info())).Distinct();
+                foreach (var child in _typeList.Children)
+                    _typeList.Remove(child);
+                foreach (var i in info) {
+                    Gtk.Label label = new(i.Name);
+                    label.ModifyFg(Gtk.StateType.Normal,
+                        new Gdk.Color((byte)i.Color.R, (byte)i.Color.G, (byte)i.Color.B));
+                    _typeList.Add(label);
+                }
+
                 _area.QueueDraw();
+                _typeList.ShowAll();
             }
-            
-            private void ExceptionHandler(Exception e) {
-                Gtk.Label label = new(e.ToString());
-                label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
-                label.Show();
-                _errorList.Add(label);
+
+            private void SetUpLogging() {
+                Sim.Logger.InfoLoggers.Add(msg => {
+                    Gtk.Label label = new(msg);
+                    label.Show();
+                    _infoList.Add(label);
+                });
+                
+                Sim.Logger.ErrorLoggers.Add(msg => {
+                    Gtk.Label label = new(msg);
+                    label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
+                    label.Show();
+                    _errorList.Add(label);
+                });
             }
         }
 

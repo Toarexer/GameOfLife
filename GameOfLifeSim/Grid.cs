@@ -85,26 +85,17 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     }
 
     internal bool MoveSim(ISimulable sim, int x, int y) {
-        if (!WithinBounds(x, y))
+        if (!RemoveSim(sim))
             return false;
 
-        if (_cells[x, y].Count >= CellCapacity)
-            return false;
-
-        GridPosition origin = sim.Position;
         sim.Position = new(x, y);
-
-        _cells[origin.X, origin.Y].Remove(sim);
-        _cells[x, y].Add(sim);
-
-        return true;
+        return CreateSim(sim);
     }
 
     internal bool RemoveSim(ISimulable sim) {
         if (!WithinBounds(sim.Position))
             return false;
-
-        _cells[sim.Position.X, sim.Position.Y].Remove(sim);
-        return true;
+        
+        return _cells[sim.Position.X, sim.Position.Y].Remove(sim);
     }
 }

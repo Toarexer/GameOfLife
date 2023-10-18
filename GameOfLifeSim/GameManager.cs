@@ -46,15 +46,6 @@ public class GameManager {
         MoveSims();
     }
 
-    public void Update(Action<Exception> exceptionHandler) {
-        try {
-            Update();
-        }
-        catch (Exception e) {
-            exceptionHandler(e);
-        }
-    }
-
     public void AddSims(IEnumerable<ISimulable> sims) {
         foreach (ISimulable sim in sims)
             Grid.CreateSim(sim);

@@ -3,6 +3,7 @@
 .vscode/
 bin/
 obj/
+publish/
 TestResults/
 
 *.user
