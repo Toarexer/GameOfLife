@@ -16,7 +16,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
     private List<Grass> _grasses = new();
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
-    private bool _createdDescendant;
+    
     /// <summary>
     /// Constructor for a Rabbit with an initial position.
     /// Initializes HP and Age properties, and sets the initial position.
@@ -29,7 +29,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         Position = position;
         Invincibility = 3;
         MatingCooldown = 0;
-        _createdDescendant = false;
     }
 
     public override void Update(Grid grid) 
@@ -40,9 +39,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         
         Move(grid);
         Eat();
-        
         IncreaseAge(1);
-        
     }
 
     protected override bool ShouldCreateDescendant()
@@ -62,7 +59,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         //MatingPair.MatingPair2.HasMatingPartner = true;
         
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
-     
     }
 
     public override ISimulable? NewDescendant(Grid grid) {
