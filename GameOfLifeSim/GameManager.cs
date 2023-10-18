@@ -55,7 +55,8 @@ public class GameManager {
             for (int x = 0; x < Grid.Width; x++)
                 foreach (ISimulable sim in Grid[x, y].ToArray())
                     try {
-                        if (sim.NewDescendant(Grid) is not null && !Grid.CreateSim(sim))
+                        ISimulable? desc = sim.NewDescendant(Grid);
+                        if (desc is not null && !Grid.CreateSim(desc))
                             Logger.Info("Failed to reproduce {0} to {1}x{2}",
                                 sim.GetType().FullName,
                                 sim.Position.X,

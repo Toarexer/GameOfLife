@@ -132,7 +132,7 @@ namespace GameOfLifeApp {
 
                 var info = GameManager.Grid.SelectMany(x => x).GroupBy(x => x.Info());
                 foreach (var g in info) {
-                    Gtk.Label label = new($"{g.Key.Name} ({g.Count()})");
+                    Gtk.Label label = new($"{g.Key.Name} ({g.Count()})") { Halign = Gtk.Align.Start };
                     label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(
                         (byte)g.Key.Color.R,
                         (byte)g.Key.Color.G,
