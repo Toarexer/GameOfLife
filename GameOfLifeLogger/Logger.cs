@@ -8,10 +8,20 @@ public static class Logger {
         foreach (Action<string> logger in InfoLoggers)
             logger($"[{GetTime()}] Info | {string.Format(format, args)}");
     }
+    
+    public static void Info(string message) {
+        foreach (Action<string> logger in InfoLoggers)
+            logger($"[{GetTime()}] Info | {message}");
+    }
 
     public static void Error(string format, params object?[] args) {
         foreach (Action<string> logger in ErrorLoggers)
             logger($"[{GetTime()}] Err  | {string.Format(format, args)}");
+    }
+
+    public static void Error(string message) {
+        foreach (Action<string> logger in ErrorLoggers)
+            logger($"[{GetTime()}] Err  | {message}");
     }
 
     private static string GetTime() {
