@@ -13,7 +13,7 @@ namespace GameOfLife.Entities
         private int _matingCooldown;
         
         protected bool HasMatingPartner;
-        public GridPosition? Position { get; set; }
+        public GridPosition Position { get; set; }
         public GridPosition? NextPosition { get; set; }
         
         /// <summary>
@@ -72,14 +72,11 @@ namespace GameOfLife.Entities
             int nextY;
 
             do {
-                nextX = Position.X + rnd.Next(-1, 2);
+                nextX = Position!.X + rnd.Next(-1, 2);
                 nextY = Position.Y + rnd.Next(-1, 2);
             } while (!grid.WithinBounds(nextX, nextY));
 
             NextPosition = new(nextX, nextY);
         }
-        public abstract void Update(Grid grid);
-        public abstract bool ShouldDie();
-        public abstract ISimulable? NewDescendant(Grid grid);
     }
 }

@@ -62,7 +62,7 @@ namespace GameOfLife.Entities
         void ISimulable.Update(Grid grid)
         { 
             Age++;  
-            Logger.Info(this.ToString());
+            //Logger.Info(this.ToString());
         } 
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace GameOfLife.Entities
                 if (grid.WithinBounds(nextTile) && grid[nextTile.X, nextTile.Y].Count == 0)
                 {
                     emptyTiles.Add(nextTile);
-                    Logger.Info($"Empty Tile at: {nextTile}");
+                    //Logger.Info($"Empty Tile at: {nextTile}");
                 }
             }
             
@@ -101,7 +101,7 @@ namespace GameOfLife.Entities
             _offsprings++;
             
             var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
-            Logger.Info($"New Grass at: {grassDescendant.Position}");
+            //Logger.Info($"New Grass at: {grassDescendant.Position}");
             return grassDescendant;
         }
 
