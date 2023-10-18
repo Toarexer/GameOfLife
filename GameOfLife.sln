@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeSimTest", "GameOf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeApp", "GameOfLifeApp\GameOfLifeApp.csproj", "{A2C1F20E-9073-4A2C-A184-038A0208E0A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeLogger", "GameOfLifeLogger\GameOfLifeLogger.csproj", "{DE04040C-D707-4A19-AB00-45853C22F561}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{A2C1F20E-9073-4A2C-A184-038A0208E0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C1F20E-9073-4A2C-A184-038A0208E0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2C1F20E-9073-4A2C-A184-038A0208E0A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE04040C-D707-4A19-AB00-45853C22F561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE04040C-D707-4A19-AB00-45853C22F561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE04040C-D707-4A19-AB00-45853C22F561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE04040C-D707-4A19-AB00-45853C22F561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
 using Sim = GameOfLifeSim;
+using GameOfLifeLogger;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,10 @@ namespace GameOfLifeApp {
             private readonly Gtk.ListBox _infoList = new();
             private readonly Gtk.ScrolledWindow _errorListScroll = new();
             private readonly Gtk.ListBox _errorList = new();
+            private readonly Gtk.Label _logCounts = new();
+
+            private int _infoCount = 0;
+            private int _errorCount = 0;
 
             public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
                 DefaultSize = new(900, 900);
@@ -44,12 +49,15 @@ namespace GameOfLifeApp {
                 _errorListScroll.Add(_errorList);
 
                 _logSwitcher.Stack = new();
-                _logSwitcher.Stack.AddTitled(_infoListScroll, "Info", "Info");
-                _logSwitcher.Stack.AddTitled(_errorListScroll, "Error", "Error");
+                _logSwitcher.Stack.AddTitled(_infoListScroll, "Infos", "Infos");
+                _logSwitcher.Stack.AddTitled(_errorListScroll, "Errors", "Errors");
+                _logSwitcher.Add(_logCounts);
 
                 _logLists.HeightRequest = 200;
                 _logLists.PackStart(_logSwitcher, false, false, 0);
                 _logLists.PackStart(_logSwitcher.Stack, true, true, 0);
+
+                _logCounts.MarginStart = 10;
 
                 _rvPaned.Pack1(_area, true, false);
                 _rvPaned.Pack2(_logLists, false, false);
@@ -123,17 +131,19 @@ namespace GameOfLifeApp {
             }
 
             private void SetUpLogging() {
-                Sim.Logger.InfoLoggers.Add(msg => {
+                Logger.InfoLoggers.Add(msg => {
                     Gtk.Label label = new(msg);
                     label.Show();
                     _infoList.Add(label);
+                    _logCounts.Text = $"({++_infoCount} Infos, {_errorCount} Errors)";
                 });
                 
-                Sim.Logger.ErrorLoggers.Add(msg => {
+                Logger.ErrorLoggers.Add(msg => {
                     Gtk.Label label = new(msg);
                     label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
                     label.Show();
                     _errorList.Add(label);
+                    _logCounts.Text = $"({_infoCount} Infos, {++_errorCount} Errors)";
                 });
             }
         }
