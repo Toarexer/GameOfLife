@@ -28,7 +28,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         Age = 0;
         Position = position;
         Invincibility = 3;
-        MatingCooldown = 0;
+        MatingCooldown = 3;
     }
 
     public override void Update(Grid grid) 
@@ -115,7 +115,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
     /// <summary>
     /// Attempts to eat a grass object, increasing the rabbit's HP.
     /// </summary>
-    public void Eat() 
+    protected override void Eat() 
     {
         if (_grasses.Count < 1 || HasMatingPartner) return;
         if (ShouldEat())

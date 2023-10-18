@@ -59,6 +59,8 @@ namespace GameOfLife.Entities
         /// </summary>
         /// <returns>True if the animal should eat; otherwise, false.</returns>
         protected abstract bool ShouldEat();
+
+        protected abstract void Eat();
         protected abstract bool ShouldCreateDescendant();
         protected abstract void Move(Grid grid);
         protected void MoveRandomly(Grid grid)
