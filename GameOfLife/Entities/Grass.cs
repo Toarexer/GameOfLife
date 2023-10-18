@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameOfLifeLogger;
 using GameOfLifeSim;
 
 namespace GameOfLife.Entities
@@ -11,7 +12,7 @@ namespace GameOfLife.Entities
     /// </summary>
     public class Grass : ISimulable, IComparable<Grass?>
     {
-        public int Hp { get; set; }
+        private int _hp;
         private int _age;
         private int _offsprings;
         public State Age
@@ -53,26 +54,18 @@ namespace GameOfLife.Entities
         public Grass(GridPosition position)
         {
             _age = 0;
-            Hp = (int)Age;
+            _hp = (int)Age;
             Position = position;
             _offsprings = 0;
         }
 
-        void ISimulable.Update(Grid grid)
-        {
-            // TODO: It should signal to rabbits that it could be eaten no matter the distance.
-            
-            Age++;
-        }
+        void ISimulable.Update(Grid grid) => Age++;
 
         /// <summary>
-        /// Determines if the grass should die. Currently, it always returns false.
+        /// Determines if the grass should die. Currently, it always returns false because it can not die.
         /// </summary>
         /// <returns>False, indicating that the grass should not die under normal conditions.</returns>
-        public bool ShouldDie()
-        {
-            return false;
-        }
+        public bool ShouldDie() => false;
 
         /// <summary>
         /// Determines whether a new descendant (Grass) can be created.
@@ -83,23 +76,29 @@ namespace GameOfLife.Entities
         public ISimulable? NewDescendant(Grid grid)
         {
             if (Age == State.Seed || _offsprings > 1) return null;
+            
+            Random rnd = new Random();
+            List<GridPosition> emptyTiles = new();
+            int[] xOffset = { 0, 1, 1,  1,  0, -1, -1, -1 };
+            int[] yOffset = { 1, 1, 0, -1, -1, -1,  0,  1 };
+
+            for (int i = 0; i < 8; i++)
+            {
+                GridPosition nextTile = new GridPosition(Position.X + xOffset[i], Position.Y + yOffset[i]);
+    
+                if (grid.WithinBounds(nextTile) && grid[nextTile.X, nextTile.Y].Count == 0)
+                {
+                    emptyTiles.Add(nextTile);
+                }
+            }
+            
+            if (emptyTiles.Count == 0) return null;
             _offsprings++;
             
-            Random rnd = new();
-            var whereCanISpread = new List<GridPosition>();
+            var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
+            Logger.Info(grassDescendant.ToString());
             
-            var top = new GridPosition(Position.X, Position.Y + 1);
-            var right = new GridPosition(Position.X + 1, Position.Y);
-            var bottom = new GridPosition(Position.X, Position.Y - 1);
-            var left = new GridPosition(Position.X - 1, Position.Y - 1);
-            
-            if (grid.WithinBounds(top) && grid[top.X, top.Y].Count == 0) whereCanISpread.Add(top);
-            if (grid.WithinBounds(right) && grid[right.X, right.Y].Count == 0) whereCanISpread.Add(right);
-            if (grid.WithinBounds(bottom) && grid[bottom.X, bottom.Y].Count == 0) whereCanISpread.Add(bottom);
-            if (grid.WithinBounds(left) && grid[left.X, left.Y].Count == 0) whereCanISpread.Add(left);
-            
-            if (whereCanISpread.Count == 0) return null;
-            return new Grass(whereCanISpread.ElementAt(rnd.Next(0, whereCanISpread.Count)));
+            return grassDescendant;
         }
 
         /// <summary>
@@ -108,10 +107,10 @@ namespace GameOfLife.Entities
         /// <returns>The nutritional value of the grass, which depends on its state.</returns>
         public int GetEaten()
         {
-            Hp = (int)Age;
-            if (Hp < 1) return 0;
+            _hp = (int)Age;
+            if (_hp < 1) return 0;
             Age--;
-            return Hp;
+            return _hp;
         }
 
         /// <summary>
