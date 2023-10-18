@@ -53,7 +53,7 @@ namespace GameOfLife.Entities
         /// <param name="position">The initial position of the grass.</param>
         public Grass(GridPosition position)
         {
-            _age = 0;
+            Age = 0;
             _hp = (int)Age;
             Position = position;
             _offsprings = 0;
@@ -93,6 +93,7 @@ namespace GameOfLife.Entities
                 if (grid.WithinBounds(nextTile) && grid[nextTile.X, nextTile.Y].Count == 0)
                 {
                     emptyTiles.Add(nextTile);
+                    Logger.Info($"Empty Tile at: {nextTile}");
                 }
             }
             
@@ -101,7 +102,6 @@ namespace GameOfLife.Entities
             
             var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
             Logger.Info($"New Grass at: {grassDescendant.Position}");
-            
             return grassDescendant;
         }
 
@@ -138,7 +138,7 @@ namespace GameOfLife.Entities
 
         public override string ToString()
         {
-            return $"Grass:\t {Position}\t|\tAge: {(int)Age}\t|\tState: {Age}  \t|\tOffsprings: {_offsprings} \t|";
+            return $"Grass:\t {Position}\t|\tHp: {_hp}\t|\tState: {Age}  \t|\tOffsprings: {_offsprings} \t|";
         }
     }
 }
