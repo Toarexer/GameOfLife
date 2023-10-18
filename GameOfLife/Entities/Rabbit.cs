@@ -12,6 +12,7 @@ namespace GameOfLife.Entities;
 public class Rabbit : Animal, ISimulable, IComparable<Rabbit> 
 {
     public readonly int NutritionalValue = 3;
+    private bool _createdDescendant;
     private const int MaxHp = 5;
     private MatingPair<Rabbit>? _matingPair;
     private List<Grass> _grasses = new();
@@ -30,9 +31,10 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         Position = position;
         Invincibility = 3;
         MatingCooldown = 3;
+        _createdDescendant = false;
     }
 
-    public override void Update(Grid grid) 
+    public void Update(Grid grid)
     {
         _grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 2).OrderDescending().ToList();
         _rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).Except(this).Order().ToList();
@@ -41,51 +43,58 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         Move(grid);
         Eat();
         IncreaseAge(1);
+        if (_createdDescendant) _createdDescendant = false;
+
         Logger.Info(this.ToString());
     }
 
     protected override bool ShouldCreateDescendant()
     {
-        if (_matingPair != null && _rabbits.Count < 1 && MatingCooldown > 0) return HasMatingPartner;
+        if (_createdDescendant || MatingCooldown > 0 || (_matingPair != null && _rabbits.Count > 1)) return false;
         
         var matingPairRabbit = _rabbits.Order().FirstOrDefault();
 
         if (matingPairRabbit == null) return false;
         _matingPair = new MatingPair<Rabbit>(this, matingPairRabbit)
         {
-            MatingPair1 = { HasMatingPartner = true }
+            MatingPair1 = { HasMatingPartner = true },
+            MatingPair2 = { HasMatingPartner = true }
         };
 
         Logger.Info(_matingPair.ToString());
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
 
-    public override ISimulable? NewDescendant(Grid grid) 
+    public ISimulable? NewDescendant(Grid grid) 
     {
         if (!ShouldCreateDescendant()) return null;
         
         if (_matingPair?.MatingPair1 != null)
         {
             _matingPair.MatingPair1.HasMatingPartner = false;
+            _matingPair.MatingPair1.MatingCooldown = 2;
+            _matingPair.MatingPair1._matingPair = null;
         }
         
         if (_matingPair?.MatingPair2 != null)
         {
             _matingPair.MatingPair2.HasMatingPartner = false;
             _matingPair.MatingPair2.MatingCooldown = 2;
+            _matingPair.MatingPair2._matingPair = null;
         }
 
-        _matingPair = null;
         MatingCooldown = 3;
+        _createdDescendant = true;
+        Logger.Info($"New Rabbit at: {Position}");
         return new Rabbit(Position);
     }
 
     
-    public override bool ShouldDie() 
+    public bool ShouldDie() 
     {
         if (Hp < 1)
         {
-            Logger.Info($"Should Die: {this}");
+            //Logger.Info($"Should Die: {this}");
             return true;
         }
         return false;
@@ -97,7 +106,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     }
 
     protected override void Move(Grid grid) {
-        if (!ShouldEat() || CanMove()) 
+        if (!ShouldEat() || !CanMove()) 
         {
             MoveRandomly(grid);
             return;
@@ -120,7 +129,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     /// </summary>
     protected override void Eat() 
     {
-        if (_grasses.Count < 1 || HasMatingPartner || !ShouldEat()) return;
+        if (_grasses.Count < 1 || !ShouldEat()) return;
         Random rnd = new();
             
         Grass[] optimalGrasses = _grasses.Where(x => (int)x.Age + this.Hp == MaxHp).ToArray();
@@ -136,7 +145,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     /// Determines if the rabbit can be eaten by a predator (Fox).
     /// </summary>
     /// <returns>True if the rabbit can be eaten; otherwise, false.</returns>
-    public bool CanBeEaten() => Invincibility == 0;
+    public bool CanBeEaten() => Invincibility == 0 && Hp > 0;
     
     /// <summary>
     /// Provides the nutritional value of the rabbit and sets its HP to 0 when eaten.
@@ -162,6 +171,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public override string ToString()
     {
-        return $"Rabbit: {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t|";
+        return $"Rabbit: {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t|  CREATED NEW? {_createdDescendant}";
     }
 }
