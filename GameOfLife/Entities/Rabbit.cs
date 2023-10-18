@@ -47,18 +47,18 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
 
     protected override bool ShouldCreateDescendant()
     {
-        if (MatingPair != null || _rabbits.Count < 1 || MatingCooldown > 0)
+        if (MatingPair != null && _rabbits.Count < 1 && MatingCooldown > 0)
         {
             return HasMatingPartner;
         }
-
-        var rabbit = _rabbits.OrderBy(x => x).First();
+        // akkor szaporodnak ha van párja, nincs szomszédos cellákban másik nyúl csak ők és a Mating cooldown 0
+        var rabbit = _rabbits.OrderBy(x => x).FirstOrDefault();
 
         MatingPair = new MatingPair<Rabbit>(this, rabbit);
         
-        Logger.Info(,MatingPair.ToString());
+        Logger.Info(MatingPair.ToString());
         
-        MatingPair.MatingPair2.HasMatingPartner = true;
+        MatingPair.MatingPair1.HasMatingPartner = true;
         //MatingPair.MatingPair2.HasMatingPartner = true;
         
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
@@ -66,15 +66,22 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
     }
 
     public override ISimulable? NewDescendant(Grid grid) {
+        
         if (!ShouldCreateDescendant()) return null;
+        
+        if (MatingPair?.MatingPair1 != null)
+        {
+            MatingPair.MatingPair1.HasMatingPartner = false;
+        }
+        
+        if (MatingPair?.MatingPair2 != null)
+        {
+            MatingPair.MatingPair2.HasMatingPartner = false;
+            MatingPair.MatingPair2.MatingCooldown = 2;
+        }
 
-        
-        if (MatingPair?.MatingPair1 != null) MatingPair.MatingPair1.HasMatingPartner = false;
-        
-        MatingPair!.MatingPair2.MatingCooldown = 2;
         MatingPair = null;
         MatingCooldown = 3;
-        
         return new Rabbit(Position);
     }
 
