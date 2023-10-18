@@ -23,7 +23,7 @@ namespace GameOfLifeApp {
             private readonly Gtk.ListBox _infoList = new();
             private readonly Gtk.ScrolledWindow _errorListScroll = new();
             private readonly Gtk.ListBox _errorList = new();
-            private readonly Gtk.Label _logCounts = new() { Text = "(0 Infos, 0 Errors)" };
+            private readonly Gtk.Label _logCounts = new() { Text = "(0 Info, 0 Errors)" };
 
             private int _infoCount = 0;
             private int _errorCount = 0;
@@ -49,7 +49,7 @@ namespace GameOfLifeApp {
                 _errorListScroll.Add(_errorList);
 
                 _logSwitcher.Stack = new();
-                _logSwitcher.Stack.AddTitled(_infoListScroll, "Infos", "Infos");
+                _logSwitcher.Stack.AddTitled(_infoListScroll, "Info", "Info");
                 _logSwitcher.Stack.AddTitled(_errorListScroll, "Errors", "Errors");
                 _logSwitcher.Add(_logCounts);
 
@@ -127,13 +127,17 @@ namespace GameOfLifeApp {
                 if (!windowOnly)
                     GameManager.Update();
 
-                var info = GameManager.Grid.SelectMany(x => x.Select(y => y.Info())).Distinct();
                 foreach (var child in _typeList.Children)
                     _typeList.Remove(child);
-                foreach (var i in info) {
-                    Gtk.Label label = new(i.Name);
-                    label.ModifyFg(Gtk.StateType.Normal,
-                        new Gdk.Color((byte)i.Color.R, (byte)i.Color.G, (byte)i.Color.B));
+
+                var info = GameManager.Grid.SelectMany(x => x).GroupBy(x => x.Info());
+                foreach (var g in info) {
+                    Gtk.Label label = new($"{g.Key.Name} ({g.Count()})");
+                    label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(
+                        (byte)g.Key.Color.R,
+                        (byte)g.Key.Color.G,
+                        (byte)g.Key.Color.B
+                    ));
                     _typeList.Add(label);
                 }
 
@@ -146,7 +150,7 @@ namespace GameOfLifeApp {
                     Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
                     label.Show();
                     _infoList.Add(label);
-                    _logCounts.Text = $"({++_infoCount} Infos, {_errorCount} Errors)";
+                    _logCounts.Text = $"({++_infoCount} Info, {_errorCount} Errors)";
                 });
 
                 Logger.ErrorLoggers.Add(msg => {
@@ -154,7 +158,7 @@ namespace GameOfLifeApp {
                     label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
                     label.Show();
                     _errorList.Add(label);
-                    _logCounts.Text = $"({_infoCount} Infos, {++_errorCount} Errors)";
+                    _logCounts.Text = $"({_infoCount} Info, {++_errorCount} Errors)";
                 });
             }
         }

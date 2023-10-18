@@ -70,9 +70,9 @@ public class GameManager {
     private void MoveSims() {
         for (int y = 0; y < Grid.Height; y++)
             for (int x = 0; x < Grid.Width; x++)
-                foreach (ISimulable sim in Grid[x, y].Where(sim => sim.NextPosition is not null).ToArray()) {
+                foreach (ISimulable sim in Grid[x, y].ToArray()) {
                     try {
-                        if (!Grid.MoveSim(sim, new(x, y), sim.NextPosition!))
+                        if (sim.NextPosition is not null && !Grid.MoveSim(sim, new(x, y), sim.NextPosition))
                             Logger.Info("Failed to move {0} from {1}x{2} to {3}x{4}",
                                 sim.GetType().FullName,
                                 sim.NextPosition!.X,
