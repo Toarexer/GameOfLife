@@ -28,5 +28,11 @@ namespace GameOfLife.Entities
             MatingPair1 = matingPair1;
             MatingPair2 = matingPair2;
         }
+
+        public override string ToString()
+        {
+            return $"Partner1: {MatingPair1}\n" +
+                   $"Partner2: {MatingPair2}";
+        }
     }
 }

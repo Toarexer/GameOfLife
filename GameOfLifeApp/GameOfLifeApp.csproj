@@ -11,7 +11,7 @@
             <LogicalName>%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
         <None Update="grid.csv">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 

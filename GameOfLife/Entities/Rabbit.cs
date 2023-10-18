@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameOfLifeSim;
+using GameOfLifeLogger;
 
 namespace GameOfLife.Entities;
 
@@ -10,12 +11,12 @@ namespace GameOfLife.Entities;
 /// </summary>
 public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
     public MatingPair<Rabbit>? MatingPair;
-        
+    
     private const int NutritionalValue = 3;
     private List<Grass> _grasses = new();
     private List<Rabbit> _rabbits = new();
     private List<Fox> _foxes = new();
-
+    private bool _createdDescendant;
     /// <summary>
     /// Constructor for a Rabbit with an initial position.
     /// Initializes HP and Age properties, and sets the initial position.
@@ -27,7 +28,8 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         Age = 0;
         Position = position;
         Invincibility = 3;
-        MatingCooldown = 3;
+        MatingCooldown = 0;
+        _createdDescendant = false;
     }
 
     public override void Update(Grid grid) 
@@ -45,34 +47,45 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
 
     protected override bool ShouldCreateDescendant()
     {
-        if (!HasMatingPartner || _rabbits.Count < 1 || Invincibility > 0 || MatingCooldown > 0)
+        if (MatingPair != null && _rabbits.Count < 1 && MatingCooldown > 0)
         {
-            HasMatingPartner = false;
             return HasMatingPartner;
         }
-
-        var rabbit = _rabbits.OrderBy(x => x).First();
+        // akkor szaporodnak ha van párja, nincs szomszédos cellákban másik nyúl csak ők és a Mating cooldown 0
+        var rabbit = _rabbits.OrderBy(x => x).FirstOrDefault();
 
         MatingPair = new MatingPair<Rabbit>(this, rabbit);
+        
+        Logger.Info(MatingPair.ToString());
+        
         MatingPair.MatingPair1.HasMatingPartner = true;
         //MatingPair.MatingPair2.HasMatingPartner = true;
         
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
+     
     }
 
     public override ISimulable? NewDescendant(Grid grid) {
-        if (!ShouldCreateDescendant()) return null;
-
-        Console.WriteLine($"Pair1: {MatingPair!.MatingPair1} | Pair2: {MatingPair!.MatingPair2} | New rabbit at: {Position}");
         
-        MatingPair!.MatingPair1.HasMatingPartner = false;
-        MatingPair!.MatingPair2.HasMatingPartner = false;
+        if (!ShouldCreateDescendant()) return null;
+        
+        if (MatingPair?.MatingPair1 != null)
+        {
+            MatingPair.MatingPair1.HasMatingPartner = false;
+        }
+        
+        if (MatingPair?.MatingPair2 != null)
+        {
+            MatingPair.MatingPair2.HasMatingPartner = false;
+            MatingPair.MatingPair2.MatingCooldown = 2;
+        }
+
         MatingPair = null;
         MatingCooldown = 3;
-        
         return new Rabbit(Position);
     }
 
+    
     public override bool ShouldDie() 
     {
         return Hp < 1;
@@ -91,7 +104,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
         }
         
         //If has mating partner
-        if (HasMatingPartner)
+        if (HasMatingPartner && MatingPair != null)
         {
             MoveRandomly(grid);
             MatingPair!.MatingPair2.NextPosition = Position;
@@ -156,6 +169,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit> {
 
     public override string ToString()
     {
-        return $"Rabbit: x: {Position.X} y: {Position.Y} Hp: {Hp} Invincibility: {Invincibility} HasPair? {HasMatingPartner}";
+        return $"Rabbit: {Position} Hp: {Hp} | Invincibility: {Invincibility} | Mating CD: {MatingCooldown} | HasPair? {HasMatingPartner}";
     }
 }
