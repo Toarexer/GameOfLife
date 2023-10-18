@@ -23,7 +23,7 @@ namespace GameOfLifeApp {
             private readonly Gtk.ListBox _infoList = new();
             private readonly Gtk.ScrolledWindow _errorListScroll = new();
             private readonly Gtk.ListBox _errorList = new();
-            private readonly Gtk.Label _logCounts = new();
+            private readonly Gtk.Label _logCounts = new() { Text = "(0 Infos, 0 Errors)" };
 
             private int _infoCount = 0;
             private int _errorCount = 0;
@@ -82,7 +82,7 @@ namespace GameOfLifeApp {
                 exitButton.Clicked += (_, _) => Destroy();
                 yield return exitButton;
             }
-            
+
             private void DrawGrid(object sender, Gtk.DrawnArgs args) {
                 Cairo.Context context = args.Cr;
                 context.Scale(_area.AllocatedWidth, _area.AllocatedHeight);
@@ -113,6 +113,12 @@ namespace GameOfLifeApp {
             }
 
             private void Update(bool windowOnly = false) {
+                _infoCount = _errorCount = 0;
+                foreach (Gtk.Widget child in _infoList.Children)
+                    _infoList.Remove(child);
+                foreach (Gtk.Widget child in _errorList.Children)
+                    _errorList.Remove(child);
+
                 if (!windowOnly)
                     GameManager.Update();
 
@@ -132,14 +138,14 @@ namespace GameOfLifeApp {
 
             private void SetUpLogging() {
                 Logger.InfoLoggers.Add(msg => {
-                    Gtk.Label label = new(msg);
+                    Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
                     label.Show();
                     _infoList.Add(label);
                     _logCounts.Text = $"({++_infoCount} Infos, {_errorCount} Errors)";
                 });
-                
+
                 Logger.ErrorLoggers.Add(msg => {
-                    Gtk.Label label = new(msg);
+                    Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
                     label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
                     label.Show();
                     _errorList.Add(label);
