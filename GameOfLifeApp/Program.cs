@@ -97,7 +97,12 @@ namespace GameOfLifeApp {
                             for (int i = 0; i < GameManager.Grid[x, y].Count; i++) {
                                 var color = GameManager.Grid[x, y][i].Info().Color;
                                 context.SetSourceRGB(color.R / 255f, color.G / 255f, color.B / 255f);
-                                context.Rectangle(x * cellWidth, (y * cellHeight) + (i * h), cellWidth, h);
+                                context.Rectangle(
+                                    x * cellWidth + 0.0005,
+                                    (y * cellHeight) + (i * h) + 0.0005,
+                                    cellWidth - 0.001,
+                                    h - 0.001
+                                );
                                 context.Fill();
                             }
                         }

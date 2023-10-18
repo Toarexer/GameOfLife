@@ -38,7 +38,7 @@ public class GameManager {
             for (int x = 0; x < Grid.Width; x++)
                 foreach (ISimulable sim in Grid[x, y].ToArray())
                     try {
-                        if (sim.ShouldDie() && !Grid.RemoveSim(sim))
+                        if (sim.ShouldDie() && !Grid.RemoveSim(sim, new(x, y)))
                             Logger.Info("Failed to remove {0} at {1}x{2}",
                                 sim.GetType().FullName,
                                 sim.Position.X,
@@ -72,7 +72,7 @@ public class GameManager {
             for (int x = 0; x < Grid.Width; x++)
                 foreach (ISimulable sim in Grid[x, y].Where(sim => sim.NextPosition is not null).ToArray()) {
                     try {
-                        if (!Grid.MoveSim(sim, sim.NextPosition!.X, sim.NextPosition!.Y))
+                        if (!Grid.MoveSim(sim, new(x, y), sim.NextPosition!))
                             Logger.Info("Failed to move {0} from {1}x{2} to {3}x{4}",
                                 sim.GetType().FullName,
                                 sim.NextPosition!.X,

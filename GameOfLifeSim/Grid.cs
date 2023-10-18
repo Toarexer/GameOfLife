@@ -71,31 +71,32 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
                 foreach (ISimulable sim in this[x, y])
                     yield return sim;
     }
-
-    internal bool CreateSim(ISimulable sim) {
-        GridPosition p = sim.Position;
-        if (!WithinBounds(p))
-            return false;
-
-        if (_cells[p.X, p.Y].Count >= CellCapacity)
+    
+    internal bool CreateSim(ISimulable sim, GridPosition pos) {
+        if (!WithinBounds(pos) || _cells[pos.X, pos.Y].Count >= CellCapacity)
             return false;
         
-        _cells[p.X, p.Y].Add(sim);
+        _cells[pos.X, pos.Y].Add(sim);
+        sim.Position = pos;
+        
         return true;
     }
 
-    internal bool MoveSim(ISimulable sim, int x, int y) {
-        if (!RemoveSim(sim))
-            return false;
-
-        sim.Position = new(x, y);
-        return CreateSim(sim);
+    internal bool CreateSim(ISimulable sim) {
+        return CreateSim(sim, sim.Position);
     }
 
-    internal bool RemoveSim(ISimulable sim) {
-        if (!WithinBounds(sim.Position))
+    internal bool MoveSim(ISimulable sim, GridPosition from, GridPosition to) {
+        if (!RemoveSim(sim, from))
+            return false;
+
+        return CreateSim(sim, to);
+    }
+
+    internal bool RemoveSim(ISimulable sim, GridPosition pos) {
+        if (!WithinBounds(pos))
             return false;
         
-        return _cells[sim.Position.X, sim.Position.Y].Remove(sim);
+        return _cells[pos.X, pos.Y].Remove(sim);
     }
 }
