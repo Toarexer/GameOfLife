@@ -1,25 +1,30 @@
 using Sim = GameOfLifeSim;
 using GameOfLifeLogger;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameOfLifeApp;
 
 class GameManagerWindow : Gtk.Window {
     public Sim.GameManager GameManager { get; private set; }
 
+    // Panned containers
     private readonly Gtk.Paned _hPaned = new(Gtk.Orientation.Horizontal);
     private readonly Gtk.Paned _lvPaned = new(Gtk.Orientation.Vertical);
     private readonly Gtk.Paned _rvPaned = new(Gtk.Orientation.Vertical);
 
+    // Left container
     private readonly Gtk.ScrolledWindow _typeListScroll = new();
     private readonly Gtk.ListBox _typeList = new();
     private readonly Gtk.ListBox _controlList = new();
 
+    // Main container
     private readonly Gtk.DrawingArea _area = new();
 
+    // Bottom container
     private readonly Gtk.Notebook _logTabs = new();
     private readonly Gtk.Label _infoTabLabel = new() { Text = "Info (0)" };
     private readonly Gtk.Label _errorTabLabel = new() { Text = "Errors (0)" };
@@ -28,16 +33,21 @@ class GameManagerWindow : Gtk.Window {
     private readonly Gtk.ScrolledWindow _errorListScroll = new();
     private readonly Gtk.ListBox _errorList = new();
 
-    private int _updateInterval;
-    private int _infoCount;
-    private int _errorCount;
+    // Controls
+    private readonly Gtk.FileChooserButton _fileChooser = new("Open a file", Gtk.FileChooserAction.Open) { TooltipText = "" };
+    private readonly Gtk.CheckButton _autorunSwitch = new() { TooltipText = "Autorun", Label = "Autorun" };
+    private readonly Gtk.SpinButton _intervalButton = new(100, 10000, 1) { TooltipText = "Millisecond interval" };
+    private readonly Gtk.Button _stepButton = new() { TooltipText = "Step the simulation", Label = "Step" };
+    private readonly Gtk.Button _exitButton = new() { TooltipText = "Quit the program", Label = "Exit" };
+
+    private int _infoCount, _errorCount;
 
     public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
         DefaultSize = new(940, 940);
         Title = title;
         GameManager = gm;
         Shown += (_, _) => Update(true);
-        Destroyed += (_, _) => Environment.Exit(0);
+        Destroyed += (_, _) => Gtk.Application.Quit();
 
         _hPaned.Add1(_lvPaned);
         _hPaned.Add2(_rvPaned);
@@ -59,25 +69,29 @@ class GameManagerWindow : Gtk.Window {
         _rvPaned.Pack1(_area, true, false);
         _rvPaned.Pack2(_logTabs, false, false);
 
-        foreach (Gtk.Widget widget in CreateControls())
-            _controlList.Add(widget);
+        _controlList.Add(_fileChooser);
+        _controlList.Add(_autorunSwitch);
+        _controlList.Add(_intervalButton);
+        _controlList.Add(_stepButton);
+        _controlList.Add(_exitButton);
 
         _area.Drawn += DrawGrid;
 
         Add(_hPaned);
+
+        SetUpControls();
         SetUpLogging();
     }
 
-    private IEnumerable<Gtk.Widget> CreateControls() {
-        Gtk.FileChooserButton fileChooser = new("Open a file", Gtk.FileChooserAction.Open);
-        fileChooser.AddFilter(new() { Name = "csv files" });
-        fileChooser.AddFilter(new() { Name = "all files" });
-        fileChooser.Filters[0].AddPattern("*.csv");
-        fileChooser.Filters[1].AddPattern("*");
-        fileChooser.SetCurrentFolder(Directory.GetCurrentDirectory());
-        fileChooser.SelectionChanged += (_, _) => {
+    private void SetUpControls() {
+        _fileChooser.AddFilter(new() { Name = "csv files" });
+        _fileChooser.AddFilter(new() { Name = "all files" });
+        _fileChooser.Filters[0].AddPattern("*.csv");
+        _fileChooser.Filters[1].AddPattern("*");
+        _fileChooser.SetCurrentFolder(Directory.GetCurrentDirectory());
+        _fileChooser.SelectionChanged += (_, _) => {
             try {
-                Sim.GameManager gm = App.LoadGrid(fileChooser.Filename);
+                Sim.GameManager gm = App.LoadGrid(_fileChooser.Filename);
                 GameManager = gm;
                 Update(true);
             }
@@ -90,29 +104,84 @@ class GameManagerWindow : Gtk.Window {
                     e.Message
                 );
                 dialog.ButtonPressEvent += (_, _) => dialog.Destroy();
-                dialog.Title = $"Failed to load {fileChooser.Filename}";
+                dialog.Title = $"Failed to load {_fileChooser.Filename}";
                 dialog.ShowAll();
             }
         };
-        yield return fileChooser;
 
-        Gtk.CheckButton autorunSwitch = new() { TooltipText = "Autorun", Label = "Autorun" };
-        // Autorun
-        yield return autorunSwitch;
+        CancellationTokenSource autorunCancellation = new();
+        _autorunSwitch.Toggled += (_, _) => {
+            _stepButton.Sensitive = !_autorunSwitch.Active;
+            if (_autorunSwitch.Active) {
+                autorunCancellation = new();
+                _ = Autorun(autorunCancellation.Token);
+            }
+            else
+                autorunCancellation.Cancel();
+        };
+        
+        _stepButton.Clicked += (_, _) => Update();
 
-        Gtk.SpinButton intervalButton = new(100, 10000, 1) { TooltipText = "Millisecond interval" };
-        intervalButton.ValueChanged += (_, _) => _updateInterval = intervalButton.ValueAsInt;
-        yield return intervalButton;
+        _exitButton.Clicked += (_, _) => Destroy();
 
-        Gtk.Button stepButton = new() { TooltipText = "Step the simulation", Label = "Step" };
-        stepButton.Clicked += (_, _) => Update();
-        yield return stepButton;
+        _fileChooser.MarginBottom = _intervalButton.MarginBottom = 20;
+    }
 
-        Gtk.Button exitButton = new() { TooltipText = "Quit the program", Label = "Exit" };
-        exitButton.Clicked += (_, _) => Destroy();
-        yield return exitButton;
+    private void SetUpLogging() {
+        Logger.InfoLoggers.Add(msg => {
+            Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
+            label.Show();
+            _infoList.Add(label);
+            _infoTabLabel.Text = $"Info ({++_infoCount})";
+        });
 
-        fileChooser.MarginBottom = intervalButton.MarginBottom = 20;
+        Logger.ErrorLoggers.Add(msg => {
+            Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
+            label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
+            label.Show();
+            _errorList.Add(label);
+            _errorTabLabel.Text = $"Errors ({++_errorCount})";
+        });
+    }
+    
+    private void Update(bool windowOnly = false) {
+        _infoCount = _errorCount = 0;
+        foreach (Gtk.Widget child in _infoList.Children)
+            _infoList.Remove(child);
+        foreach (Gtk.Widget child in _errorList.Children)
+            _errorList.Remove(child);
+
+        if (!windowOnly)
+            GameManager.Update();
+
+        foreach (var child in _typeList.Children)
+            _typeList.Remove(child);
+
+        var info = GameManager.Grid.SelectMany(x => x).GroupBy(x => x.Info());
+        foreach (var g in info) {
+            Gtk.Label label = new($"{g.Key.Name} ({g.Count()})") { Halign = Gtk.Align.Start };
+            label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(
+                (byte)g.Key.Color.R,
+                (byte)g.Key.Color.G,
+                (byte)g.Key.Color.B
+            ));
+            _typeList.Add(label);
+        }
+
+        _area.QueueDraw();
+        _typeList.ShowAll();
+    }
+
+    private async Task Autorun(CancellationToken token) {
+        while (true) {
+            Update();
+            try {
+                await Task.Delay(_intervalButton.ValueAsInt, token);
+            }
+            catch (TaskCanceledException) {
+                return;
+            }
+        }
     }
 
     private void DrawGrid(object sender, Gtk.DrawnArgs args) {
@@ -147,50 +216,5 @@ class GameManagerWindow : Gtk.Window {
                     context.Fill();
                 }
             }
-    }
-
-    private void Update(bool windowOnly = false) {
-        _infoCount = _errorCount = 0;
-        foreach (Gtk.Widget child in _infoList.Children)
-            _infoList.Remove(child);
-        foreach (Gtk.Widget child in _errorList.Children)
-            _errorList.Remove(child);
-
-        if (!windowOnly)
-            GameManager.Update();
-
-        foreach (var child in _typeList.Children)
-            _typeList.Remove(child);
-
-        var info = GameManager.Grid.SelectMany(x => x).GroupBy(x => x.Info());
-        foreach (var g in info) {
-            Gtk.Label label = new($"{g.Key.Name} ({g.Count()})") { Halign = Gtk.Align.Start };
-            label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(
-                (byte)g.Key.Color.R,
-                (byte)g.Key.Color.G,
-                (byte)g.Key.Color.B
-            ));
-            _typeList.Add(label);
-        }
-
-        _area.QueueDraw();
-        _typeList.ShowAll();
-    }
-
-    private void SetUpLogging() {
-        Logger.InfoLoggers.Add(msg => {
-            Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
-            label.Show();
-            _infoList.Add(label);
-            _infoTabLabel.Text = $"Info ({++_infoCount})";
-        });
-
-        Logger.ErrorLoggers.Add(msg => {
-            Gtk.Label label = new(msg) { Halign = Gtk.Align.Start };
-            label.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
-            label.Show();
-            _errorList.Add(label);
-            _errorTabLabel.Text = $"Errors ({++_errorCount})";
-        });
     }
 }
