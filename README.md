@@ -1,6 +1,6 @@
 # Game of life - Élet játéka
 
-Az adott szimuláció nyomokban tartalmazza a **John Conway's Game of Life** féle szimuláció szabályrendszerét.
+Az adott szimuláció a **John Conway's Game of Life** féle szabályrendszert veszi alapul.
 
 ## Szabályrendszer
 
