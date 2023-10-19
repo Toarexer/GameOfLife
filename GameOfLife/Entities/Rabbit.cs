@@ -36,6 +36,8 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public void Update(Grid grid)
     {
+        Logger.Info(this.ToString());
+        
         _grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 2).OrderDescending().ToList();
         _rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).Except(this).Order().ToList();
         _foxes = grid.SimsOfTypeInRadius<Fox>(Position.X, Position.Y, 2).ToList();
@@ -44,8 +46,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         Eat();
         IncreaseAge(1);
         if (_createdDescendant) _createdDescendant = false;
-
-        Logger.Info(this.ToString());
     }
 
     protected override bool ShouldCreateDescendant()
@@ -83,7 +83,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
             _matingPair.MatingPair2._matingPair = null;
         }
 
-        MatingCooldown = 3;
         _createdDescendant = true;
         Logger.Info($"New Rabbit at: {Position}");
         return new Rabbit(Position);
@@ -94,7 +93,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     {
         if (Hp < 1)
         {
-            //Logger.Info($"Should Die: {this}");
+            Logger.Info($"Died: {this}");
             return true;
         }
         return false;
@@ -171,6 +170,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public override string ToString()
     {
-        return $"Rabbit: {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t|  CREATED NEW? {_createdDescendant}";
+        return $"Rabbit: {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t| CREATED NEW? {_createdDescendant}";
     }
 }

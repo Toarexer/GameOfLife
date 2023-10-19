@@ -31,7 +31,7 @@ namespace GameOfLife.Entities
 
         public override string ToString()
         {
-            return $"Mating Pair of {typeof(T).Name}s:" +
+            return $"Mating Pair of {typeof(T).Name}:" +
                    $"\n\t\tPartner1: {MatingPair1}" +
                    $"\n\t\tPartner2: {MatingPair2}";
         }
