@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GameOfLifeApp;
 
-class GameManagerWindow : Gtk.Window {
+internal sealed class GameManagerWindow : Gtk.Window {
     public Sim.GameManager GameManager { get; private set; }
 
     // Panned containers
@@ -34,7 +34,8 @@ class GameManagerWindow : Gtk.Window {
     private readonly Gtk.ListBox _errorList = new();
 
     // Controls
-    private readonly Gtk.FileChooserButton _fileChooser = new("Open a file", Gtk.FileChooserAction.Open) { TooltipText = "" };
+    private readonly Gtk.FileChooserButton _fileChooser = new("Open a file", Gtk.FileChooserAction.Open)
+        { TooltipText = "Open a csv file with the correct format to load an initial grid state" };
     private readonly Gtk.CheckButton _autorunSwitch = new() { TooltipText = "Autorun", Label = "Autorun" };
     private readonly Gtk.SpinButton _intervalButton = new(100, 10000, 1) { TooltipText = "Millisecond interval" };
     private readonly Gtk.Button _stepButton = new() { TooltipText = "Step the simulation", Label = "Step" };
@@ -44,7 +45,6 @@ class GameManagerWindow : Gtk.Window {
 
     public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
         DefaultSize = new(940, 940);
-        Title = title;
         GameManager = gm;
         Shown += (_, _) => Update(true);
         Destroyed += (_, _) => Gtk.Application.Quit();
@@ -70,8 +70,10 @@ class GameManagerWindow : Gtk.Window {
         _rvPaned.Pack2(_logTabs, false, false);
 
         _controlList.Add(_fileChooser);
+        _controlList.Add(new Gtk.Separator(Gtk.Orientation.Horizontal) { Margin = 5 });
         _controlList.Add(_autorunSwitch);
         _controlList.Add(_intervalButton);
+        _controlList.Add(new Gtk.Separator(Gtk.Orientation.Horizontal) { Margin = 5 });
         _controlList.Add(_stepButton);
         _controlList.Add(_exitButton);
 
@@ -89,24 +91,19 @@ class GameManagerWindow : Gtk.Window {
         _fileChooser.Filters[0].AddPattern("*.csv");
         _fileChooser.Filters[1].AddPattern("*");
         _fileChooser.SetCurrentFolder(Directory.GetCurrentDirectory());
-        _fileChooser.SelectionChanged += (_, _) => {
-            try {
-                Sim.GameManager gm = App.LoadGrid(_fileChooser.Filename);
-                GameManager = gm;
-                Update(true);
-            }
-            catch (Exception e) {
-                Gtk.MessageDialog dialog = new(
-                    this,
-                    Gtk.DialogFlags.Modal,
-                    Gtk.MessageType.Error,
-                    Gtk.ButtonsType.Ok,
-                    e.Message
-                );
-                dialog.ButtonPressEvent += (_, _) => dialog.Destroy();
-                dialog.Title = $"Failed to load {_fileChooser.Filename}";
-                dialog.ShowAll();
-            }
+        _fileChooser.SelectionChanged += (obj, _) => {
+            if (obj is Gtk.FileChooserButton fcb && fcb.Files.Length > 0)
+                try {
+                    Sim.GameManager gm = App.LoadGrid(fcb.Filename);
+                    GameManager = gm;
+                    Update(true);
+                }
+                catch (Exception e) {
+                    ErrorPopup popup = new(this, fcb.Filename, e.Message);
+                    popup.Run();
+                    popup.Destroy();
+                    fcb.UnselectAll();
+                }
         };
 
         CancellationTokenSource autorunCancellation = new();
@@ -123,8 +120,6 @@ class GameManagerWindow : Gtk.Window {
         _stepButton.Clicked += (_, _) => Update();
 
         _exitButton.Clicked += (_, _) => Destroy();
-
-        _fileChooser.MarginBottom = _intervalButton.MarginBottom = 20;
     }
 
     private void SetUpLogging() {
