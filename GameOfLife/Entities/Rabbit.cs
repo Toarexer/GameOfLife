@@ -72,14 +72,14 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         if (_matingPair?.MatingPair1 != null)
         {
             _matingPair.MatingPair1.HasMatingPartner = false;
-            _matingPair.MatingPair1.MatingCooldown = 2;
+            _matingPair.MatingPair1.MatingCooldown = 3;
             _matingPair.MatingPair1._matingPair = null;
         }
         
         if (_matingPair?.MatingPair2 != null)
         {
             _matingPair.MatingPair2.HasMatingPartner = false;
-            _matingPair.MatingPair2.MatingCooldown = 2;
+            _matingPair.MatingPair2.MatingCooldown = 3;
             _matingPair.MatingPair2._matingPair = null;
         }
 
