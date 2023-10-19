@@ -110,5 +110,5 @@ ___
 - Alapértelmezett állapotba kerül a szülő által megadott pozícióra.
 ___
 #### Elfogyasztás
-- Amennyiben el lett fogyasztva, akkor az állapota csökken pl: (Tuft - Tender), (Tender - Seed)
+- Amennyiben el lett fogyasztva, akkor az állapota csökken pl: (Tuft -> Tender), (Tender -> Seed)
 - Az állapot nem csökkenhet tovább, ha Seed.
