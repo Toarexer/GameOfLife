@@ -7,7 +7,8 @@ Az adott szimuláció nyomokban tartalmazza a **John Conway's Game of Life** fé
 ### Állat
 
 #### Alapviselkedés:
-    Mindenek felett a fajfenntartás a legfontosabb számukra, tehát az életüket adják azért, hogy utódot generáljanak.
+    Mindenek felett a fajfenntartás a legfontosabb számukra, tehát az életüket adják azért,
+    hogy utódot generáljanak.
 
 ___
 #### Mozgás:
@@ -21,13 +22,18 @@ ___
 #### Vadászat:
     - Minden alkalommal leellenőrzi, hogy van-e állat a szomszédos cellákba.
     - Akkor tudja megenni az állatot, amikor a halhatatlanság időzítő elérte a 0-t.
-    - Amint sikerült megennie az állatot, feltölti a saját HP-ját a préda értékével, de nem lehet több, mint a Maximum HP-ja.
+    - Amint sikerült megennie az állatot, feltölti a saját HP-ját a préda értékével,
+      de nem lehet több, mint a Maximum HP-ja.
 
 ___
 #### Párok:
-    - Ha talált egy párt az állat a szomszédos mezőkben, akkor egy kapcsolat alakul ki közöttük, és az egyik tag követni fogja a párját az új utód születéséig.
-    - Amint létrejött egy utód, a kapcsolat kettőjük közt megszűnik és egy időzítő indul, hogy mikor szaporodhatnak újra.
-    - A párok csak akkor tudnak létrehozni egy utódot, ha szaporodási időzítő lejárt és a cella üres, illetve nincs a szomszédba más állat.
+    - Ha talált egy párt az állat a szomszédos mezőkben, akkor egy kapcsolat alakul ki közöttük.
+    - Az egyik tag követni fogja a párját az új utód születéséig.
+    - Amint létrejött egy utód, a kapcsolat kettőjük közt megszűnik és egy időzítő indul.
+    - A párok csak akkor tudnak létrehozni egy utódot, ha a:
+        - szaporodási időzítő lejárt
+        - cella üres
+        - a szomszédos cellákat is megvizsgálva csak ketten tartózkodnak a területen.
 
 ___
 #### Utód:
@@ -42,13 +48,14 @@ ___
 ___
 #### Vadászat:
     - A reálisabb szimuláció érdekében a róka bármikor megeheti a nyulat, ha éhes.
-      Annyit jelent, hogy, nem veszi figyelembe, azt, hogy csak akkor egyen, amikor a róka HP-ja + a nyúl által adott érték == a róka Max HP-val.
+      Annyit jelent, hogy, nem veszi figyelembe, azt, hogy csak akkor egyen, 
+      amikor a róka HP-ja + a nyúl által adott érték == a róka Max HP-val.
     - Mindig a legidősebb nyulat fogja megenni.
     - Továbbá az alapviselkedést veszi figyelembe.
 ___
 #### Párok:
     - A párválasztás életév szerint növekvő sorrendbe történik.
-    Megfelel az alapviselkedésnek.
+    - Megfelel az alapviselkedésnek.
 ___
 #### Utód:
     - Az utód viselkedése a szülő viselkedésének felel meg.
@@ -57,7 +64,8 @@ ___
 ### Nyúl
 
 #### Mozgás:
-    - Megvizsgálj, hogy a következő pozíció nem-e esik ki a rácsrendszerből. Amennyiben nem, akkor mozdul egyet.
+    - Megvizsgálja, hogy a következő pozíció nem-e esik ki a rácsrendszerből. 
+    - Akkor mozdul egyet, ha a pozíció a rácsrendszeren belül van.
     - Amennyiben lát 2 sugarú körzetben lát füvet és a fű állapota nem mag akkor ráugrik.
     - Ha van párban vannak akkor követik egymást.
     - Továbbá az alapviselkedést veszi figyelembe
