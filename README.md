@@ -45,8 +45,8 @@ Az adott szimuláció nyomokban tartalmazza a **John Conway's Game of Life** fé
 >- Amint létrejön, egy halhatatlansági és egy szaporodási időzítő indul.
 >- Ugyanúgy viselkedik, mint a szülő.
 
->### Róka
->
+### Róka
+
 >#### Mozgás:
 >- A mozgás az alapviselkedésének felel meg.
 >___
@@ -64,8 +64,8 @@ Az adott szimuláció nyomokban tartalmazza a **John Conway's Game of Life** fé
 >- Az utód viselkedése a szülő viselkedésének felel meg.
 >- Továbbá az alapviselkedést veszi figyelembe.
 
->### Nyúl
->
+### Nyúl
+
 >#### Mozgás:
 >- Megvizsgálja, hogy a következő pozíció nem-e esik ki a rácsrendszerből. 
 >- Akkor mozdul egyet, ha a pozíció a rácsrendszeren belül van.
@@ -86,8 +86,8 @@ Az adott szimuláció nyomokban tartalmazza a **John Conway's Game of Life** fé
 
 ## Növények
 
->### Fű
->
+### Fű
+
 >#### Alapértelmezett állapot:
 >- Állapotok:    
 >    - Seed:   Tápérték -> 0 (mag),              
