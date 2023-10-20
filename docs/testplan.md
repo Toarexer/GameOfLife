@@ -34,10 +34,18 @@ Sims may print out information about themselves this way and the [GameManger](..
 
 ## [Grid](../GameOfLifeSim/Grid.cs)
 
-- If there is at least 1 grass on the grid, it should eventually fill the whole grid. 
-- If there is only 1 rabbit, it should roam for 5 rounds, then die. 
-- If there is only 1 rabbit and at least 1 grass, it should eat the grass starting from the 2nd round. 
-- If there is only 1 fox, it should roam for 8 rounds, then die. 
+- If there is at least **1** grass on the grid, it should eventually fill the whole grid. 
+- If there is only **1** rabbit, it should roam for **5** rounds, then die. 
+- If there is only **1** rabbit and at least **1** grass, it should eat the grass starting from the 2nd round. 
+- If there is only **1** fox, it should roam for **8** rounds, then die.
+- If there are at least **2** rabbits, they should make a pair and create new descendant at a empty tile.
+- If there are at least **2** foxes, they should make a pair and create new descendant at a empty tile.
+- If there are rabbits and foxes, the foxes should eat the rabbits when the time comes.
+- If there are rabbits, foxes, and at least **1** grass, the simulation should run.
+- If the animals are dead, only grass should remain on all tiles.
+- If there are any errors, it should appear in the **errors** tab.
+- If there are any logging, it should appear in the **log** tab.
+- If there are any exceptions, check the [User Documentation](./docs/window.md)
 
 
 ## [Fox](../GameOfLife/Entities/Fox.cs)
@@ -155,7 +163,7 @@ Sims may print out information about themselves this way and the [GameManger](..
 
 ### GetEaten
 - Verify that the GetEaten method returns the correct nutritional value when the Rabbit is eaten.
-- Check if the Rabbit's HP is set to 0 after being eaten.
+- Check if the Rabbit's HP is set to **0** after being eaten.
 
 ### CompareTo
 
