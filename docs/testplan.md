@@ -82,7 +82,7 @@ The following sections will detail the expected behavior of the crucial parts of
 
 ### Move
 
-- Check if the method correctly sets the current Position to NextPosition.
+- Check if the method correctly sets the NextPosition.
 - Check if the Fox moves randomly if it should.
 - Verify if the Fox moves appropriately when in a mating pair.
 
@@ -138,7 +138,7 @@ The following sections will detail the expected behavior of the crucial parts of
 
 ### Move
 
-- Check if the method correctly sets the current Position to NextPosition.
+- Check if the method correctly sets the NextPosition.
 - Check if the Rabbit moves randomly if it should.
 - Verify if the Rabbit moves appropriately when in a mating pair.
 
@@ -162,3 +162,30 @@ The following sections will detail the expected behavior of the crucial parts of
 ## [Grass](../GameOfLife/Entities/Grass.cs)
 
 ### Constructor
+
+- Check the position of the new Grass if it has spawned at the specified position. 
+- Check if the Grass's properties were correctly initialized.
+
+### Update
+
+- Verify that the Update method correctly updates the Grass's properties.
+- Ensure that the Grass's age increases by **1**.
+
+### ShouldDie
+
+- Verify that the method always returns false.
+
+### NewDescendant
+
+- Check that the method returns a new Grass with appropriate position when the conditions are met.
+
+### GetEaten
+
+- Check that the method correctly returns the nutritional value based on the Grass's State.
+- Check if the State of the Grass decreases by **1** when it has been eaten.
+
+### CompareTo
+
+- Check if the method returns **-1** when this Grass's Age is less than the other's.
+- Check if the method returns **0** when this Grass's Age are equal to the other's.
+- Check if the method returns **1** when this Grass's Age are greater than the other's.
