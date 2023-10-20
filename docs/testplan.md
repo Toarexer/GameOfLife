@@ -38,6 +38,9 @@ The following sections will detail the expected behavior of the crucial parts of
 - If there are rabbits and foxes, the foxes should eat the rabbits when the time comes.
 - If there are rabbits, foxes, and at least **1** grass, the simulation should run.
 - If the animals are dead, only grass should remain on all tiles.
+- If there are any errors, it should appear in the **errors** tab.
+- If there are any logging, it should appear in the **log** tab.
+- If there are any exceptions, check the [User Documentation](./docs/window.md)
 
 
 ## [Fox](../GameOfLife/Entities/Fox.cs)
