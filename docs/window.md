@@ -1,4 +1,4 @@
-# Application Window
+# Application Window and it's Usage
 
 The window of the application is made with the [Gtk 3.22](https://github.com/GNOME/gtk/tree/gtk-3-22) wrapper, [GtkSharp](https://github.com/GtkSharp/GtkSharp).
 

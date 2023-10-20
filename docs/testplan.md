@@ -45,7 +45,8 @@ Sims may print out information about themselves this way and the [GameManger](..
 - If the animals are dead, only grass should remain on all tiles.
 - If there are any errors, it should appear in the **errors** tab.
 - If there are any logging, it should appear in the **log** tab.
-- If there are any exceptions, check the [User Documentation](./docs/window.md)
+
+> About loading in a grid into the application please check the [user manual](./window.md)
 
 
 ## [Fox](../GameOfLife/Entities/Fox.cs)
