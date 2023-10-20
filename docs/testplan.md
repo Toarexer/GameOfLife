@@ -82,7 +82,7 @@ The following sections will detail the expected behavior of the crucial parts of
 
 ### Move
 
-- Check if the method correctly sets the NextPosition.
+- Check if the method correctly sets the current Position to NextPosition.
 - Check if the Fox moves randomly if it should.
 - Verify if the Fox moves appropriately when in a mating pair.
 
@@ -111,15 +111,54 @@ The following sections will detail the expected behavior of the crucial parts of
 - Ensure that new descendants only spawn under appropriate conditions.
 - Check if the Mating pairs are handled correctly.
 
+### ShouldCreateDescendant
+
+- Check if the method returns **true** when the conditions are met.
+- Check if the method returns **false** when the conditions are not met.
+
+### NewDescendant
+
+- Verify that the method creates a new Fox object when the conditions are met.
+- Check if the created descendant was created with default properties.
+
 ### ShouldEat
 
 - Check if the ShouldEat method returns **true** when the HP is less then MaxHP.
 - Check if the method returns **false** when the HP equals MaxHP.
 
+### ShouldDie
 
+- Check if the method returns **true** when the HP reaches **0**.
+- Check if the method returns **false** when the HP is greater than **0**.
 
+### CanMove
+- Verify that the CanMove method correctly determines if the Rabbit can move.
+- Check if the method returns true when there are no nearby foxes and the Rabbit has no mating partner.
+- Ensure that the method returns false when conditions do not allow the Rabbit to move.
 
+### Move
+
+- Check if the method correctly sets the current Position to NextPosition.
+- Check if the Rabbit moves randomly if it should.
+- Verify if the Rabbit moves appropriately when in a mating pair.
+
+### CanBeEaten
+
+- Verify the method correctly determines if the Rabbit can be eaten by a Fox.
+- Check if the method returns **true** when the Rabbit is not invincible and the HP is greater than **0**.
+- Check if the method returns **false** when the Rabbit is invincible or the HP is less or equals to **0**.
+
+### GetEaten
+- Verify that the GetEaten method returns the correct nutritional value when the Rabbit is eaten.
+- Check if the Rabbit's HP is set to 0 after being eaten.
+
+### CompareTo
+
+- Check if the method returns **-1** when this Rabbit's Age is less than the other's.
+- Check if the method returns **0** when this Rabbit's Age are equal to the other's.
+- Check if the method returns **1** when this Rabbit's Age are greater than the other's.
 
 
 ## [Grass](../GameOfLife/Entities/Grass.cs)
 
+### Constructor
