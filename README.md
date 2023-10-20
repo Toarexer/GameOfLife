@@ -1,8 +1,9 @@
 # Game of life - Élet játéka
 
-### [Felhasználói dokumentáció (ENG)](./docs/window.md)
-
 Az adott szimuláció a **John Conway's Game of Life** féle szabályrendszert veszi alapul.
+
+### [Felhasználói dokumentáció (English)](./docs/window.md)
+### [Tesztelési Terv (English)](./docs/testplan.md)
 
 ## Szabályrendszer
 Egy cellán belül maximum **8** élőlény tartózkodhat
