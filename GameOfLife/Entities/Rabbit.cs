@@ -36,7 +36,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public void Update(Grid grid)
     {
-        Logger.Info(this.ToString());
         
         _grasses = grid.SimsOfTypeInRadius<Grass>(Position.X, Position.Y, 2).OrderDescending().ToList();
         _rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).Except(this).Order().ToList();
@@ -46,6 +45,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         Eat();
         IncreaseAge(1);
         if (_createdDescendant) _createdDescendant = false;
+        //Logger.Info(this.ToString());
     }
 
     protected override bool ShouldCreateDescendant()
@@ -61,7 +61,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
             MatingPair2 = { HasMatingPartner = true }
         };
 
-        Logger.Info(_matingPair.ToString());
+        //Logger.Info(_matingPair.ToString());
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
 
@@ -84,16 +84,16 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         }
 
         _createdDescendant = true;
-        Logger.Info($"New Rabbit at: {Position}");
+        //Logger.Info($"New Rabbit at: {Position}");
         return new Rabbit(Position);
     }
 
     
     public bool ShouldDie() 
     {
-        if (Hp < 1)
+        if (Hp < 1 || Age > 30)
         {
-            Logger.Info($"Died: {this}");
+            //Logger.Info($"Died: {this}");
             return true;
         }
         return false;
@@ -104,13 +104,13 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         return !_foxes.Any() && !HasMatingPartner;
     }
 
-    protected override void Move(Grid grid) {
-        if (!ShouldEat() || !CanMove()) 
+    protected override void Move(Grid grid)
+    {
+        if (ShouldEat() || !CanMove()) 
         {
             MoveRandomly(grid);
             return;
         }
-        
         if (HasMatingPartner && _matingPair != null)
         {
             MoveRandomly(grid);
@@ -170,6 +170,6 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
 
     public override string ToString()
     {
-        return $"Rabbit: {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t| CREATED NEW? {_createdDescendant}";
+        return $"Rabbit: {Position}\t|\tAge: {Age}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner} \t| CREATED NEW? {_createdDescendant}";
     }
 }
