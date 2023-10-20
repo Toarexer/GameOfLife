@@ -1,4 +1,4 @@
-25x25
+32x32
 Grass,6,6
 Grass,7,15
 Grass,7,7
@@ -19,6 +19,10 @@ Grass,20,20
 Rabbit,10,21
 Rabbit,5,5
 Rabbit,15,6
+Rabbit,20,16
+Rabbit,10,20
+Rabbit,16,24
+Rabbit,20,20
 Rabbit,20,16
 Rabbit,10,20
 Rabbit,16,24
