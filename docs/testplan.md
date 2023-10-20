@@ -23,9 +23,14 @@ All of these are included within the release.
 Building from source requires the [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) SDK.
 The [GtkSharp](https://github.com/GtkSharp/GtkSharp) library is included within the project as a NuGET package.
 
+
 ## Expected Behavior
 
 The following sections will detail the expected behavior of the crucial parts of the simulation.
+
+The Sims and the [GameManger](../GameOfLifeSim/GameManager.cs) can take advantage of a global [logger](../GameOfLifeLogger/Logger.cs) that can have multiple logging functions.\
+By default an info and an error logger is given to it by the application [window](../GameOfLifeApp/Window.cs) that makes the info and errors of the current step appear in it.\
+Sims may print out information about themselves this way and the [GameManger](../GameOfLifeSim/GameManager.cs) may print out the exceptions of the sims as as errors.
 
 ## [Grid](../GameOfLifeSim/Grid.cs)
 
