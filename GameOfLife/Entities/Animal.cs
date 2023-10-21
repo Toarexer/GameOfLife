@@ -45,9 +45,9 @@ namespace GameOfLife.Entities
         /// Decreases the MatingCooldown by 1.
         /// </summary>
         /// <param name="unit">The amount by which to increase the age.</param>
-        public void IncreaseAge(int unit)
+        public void IncreaseAge()
         {
-            Age += unit;
+            Age++;
             Hp--;
             Invincibility--;
             MatingCooldown--;

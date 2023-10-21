@@ -43,7 +43,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         
         Move(grid);
         Eat();
-        IncreaseAge(1);
+        IncreaseAge();
         if (_createdDescendant) _createdDescendant = false;
         //Logger.Info(this.ToString());
     }

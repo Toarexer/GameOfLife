@@ -37,7 +37,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
 
         Move(grid);
         Eat();
-        IncreaseAge(1);
+        IncreaseAge();
         if (_createdDescendant) _createdDescendant = false;
         //Logger.Info(this.ToString());
     }
