@@ -1,11 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GameOfLifeSim;
 
 public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
-    public class GridEnumerator : IEnumerator<IReadOnlyList<ISimulable>> {
+    private class GridEnumerator : IEnumerator<IReadOnlyList<ISimulable>> {
         private readonly Grid _grid;
         private int _index = -1;
 
@@ -15,7 +13,7 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
 
         public void Reset() => _index = -1;
 
-        public IReadOnlyList<ISimulable> Current => _grid[_index % _grid.Width, _index / _grid.Width];
+        public IReadOnlyList<ISimulable> Current => _grid._cells[_index];
 
         object IEnumerator.Current => Current;
 
@@ -23,18 +21,20 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         }
     }
 
-    private readonly List<ISimulable>[,] _cells;
+    private readonly List<ISimulable>[] _cells;
 
-    public int Width => _cells.GetLength(0);
-    public int Height => _cells.GetLength(1);
+    public int Width { get; }
+    public int Height { get; }
     
     public int CellCapacity { get; }
 
     internal Grid(int width, int height, int cellcap) {
-        _cells = new List<ISimulable>[width, height];
-        for (int y = 0; y < Height; y++)
-            for (int x = 0; x < Width; x++)
-                _cells[x, y] = new();
+        _cells = new List<ISimulable>[width * height];
+        for (int i = 0; i < _cells.Length; i++)
+            _cells[i] = new();
+        
+        Width = width;
+        Height = height;
         CellCapacity = cellcap;
     }
 
@@ -42,6 +42,8 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    private int PosToIndex(int x, int y) => y * Width + x;
+    
     public bool WithinBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 
     public bool WithinBounds(GridPosition p) => WithinBounds(p.X, p.Y);
@@ -49,7 +51,7 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     public IReadOnlyList<ISimulable> this[int x, int y] {
         get {
             if (WithinBounds(x, y))
-                return _cells[x, y].AsReadOnly();
+                return _cells[PosToIndex(x, y)].AsReadOnly();
             return new List<ISimulable>().AsReadOnly();
         }
     }
@@ -73,10 +75,10 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     }
     
     internal bool CreateSim(ISimulable sim, GridPosition pos) {
-        if (!WithinBounds(pos) || _cells[pos.X, pos.Y].Count >= CellCapacity)
+        if (!WithinBounds(pos) || _cells[PosToIndex(pos.X, pos.Y)].Count >= CellCapacity)
             return false;
         
-        _cells[pos.X, pos.Y].Add(sim);
+        _cells[PosToIndex(pos.X, pos.Y)].Add(sim);
         sim.Position = pos;
         
         return true;
@@ -97,6 +99,6 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
         if (!WithinBounds(pos))
             return false;
         
-        return _cells[pos.X, pos.Y].Remove(sim);
+        return _cells[PosToIndex(pos.X, pos.Y)].Remove(sim);
     }
 }
