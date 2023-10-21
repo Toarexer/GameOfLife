@@ -31,7 +31,6 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
     }
 
     public void Update(Grid grid) {
-        Logger.Info(this.ToString());
         
         _rabbits = grid.SimsOfTypeInRadius<Rabbit>(Position.X, Position.Y, 2).OrderByDescending(x => x).ToList();
         _foxes = grid.SimsOfTypeInRadius<Fox>(Position.X, Position.Y, 2).Except(this).OrderByDescending(x => x).ToList();
@@ -40,6 +39,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         Eat();
         IncreaseAge(1);
         if (_createdDescendant) _createdDescendant = false;
+        //Logger.Info(this.ToString());
     }
     
     protected override bool ShouldEat() 
@@ -61,7 +61,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         if (Hp + hpToGive > MaxHp)
         {
             Hp = MaxHp;
-            Logger.Info($"{this}\t|\n\tATE: {rabbitToEat}");
+            //Logger.Info($"{this}\t|\n\tATE: {rabbitToEat}");
             return;
         }
         Hp += hpToGive;
@@ -69,9 +69,9 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
 
     public bool ShouldDie() 
     {
-        if (Hp < 1)
+        if (Hp < 1|| Age > 50)
         {
-            Logger.Info($"Died: {this}");
+            //Logger.Info($"Died: {this}");
             return true;
         }
         return false;
@@ -90,7 +90,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
             MatingPair2 = { HasMatingPartner = true }
         };
 
-        Logger.Info(_matingPair.ToString());
+        //Logger.Info(_matingPair.ToString());
         return HasMatingPartner && _foxes.Count == 1;
     }
 
@@ -112,7 +112,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         }
 
         _createdDescendant = true;
-        Logger.Info($"New FOX at: {Position}");
+        //Logger.Info($"New FOX at: {Position}");
         return new Fox(Position);
     }
 
@@ -139,6 +139,6 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
     
     public override string ToString()
     {
-        return $"Fox:\t  {Position}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner}  \t| CREATED NEW? {_createdDescendant}";
+        return $"Fox:\t  {Position}\t|\tAge: {Age}\t|\tHp: {Hp}\t|\tInvincibility: {Invincibility}\t|\tMating CD: {MatingCooldown}  \t|\tHasPair? {HasMatingPartner}  \t| CREATED NEW? {_createdDescendant}";
     }
 }
