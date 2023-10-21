@@ -54,7 +54,7 @@ public class Grid : IEnumerable<IReadOnlyList<ISimulable>> {
     /// <summary>Checks if the the coordinates fall within the <see cref="Grid"/>.</summary>
     /// <returns>True if the coordinates are within the <see cref="Grid"/>, otherwise False.</returns>
     public bool WithinBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
-    
+
     /// <param name="p">The <see cref="GridPosition"/> that stores the horizontal and vertical positions that start from 0.</param>
     /// <summary>Checks if the <see cref="GridPosition"/> falls within the <see cref="Grid"/>.</summary>
     /// <returns>True if the <see cref="GridPosition"/> is within the <see cref="Grid"/>, otherwise False.</returns>
