@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GameOfLife.Entities.Animal">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAIAAAAEIAAAAAkAEAAAAAgAABAAAIAAAABwBAAQAA=</HashCode>
+      <FileName>Entities\Animal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameOfLife.Entities.Fox">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABwAABAAEIAAAAQEAAAAAAAEAAAAAAAAAoAAAEEAAAA=</HashCode>
+      <FileName>Entities\Fox.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="GameOfLife.Entities.Grass">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="GameOfLife.Entities.Grass.State" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Entities\Grass.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAgAAAAAQQkgEAAAAAAAAAAAAgAAoAACEAAAAA=</HashCode>
+      <FileName>Entities\Grass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="GameOfLife.Entities.MatingPair&lt;T&gt;">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAEAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\MatingPair.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameOfLife.Entities.Rabbit">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AB0AADAgEIAAEAQEAAAAAAAEAAAAAAAACoAAAEEAAAA=</HashCode>
+      <FileName>Entities\Rabbit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
