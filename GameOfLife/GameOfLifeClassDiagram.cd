@@ -17,8 +17,11 @@
   </Class>
   <Class Name="GameOfLife.Entities.Grass">
     <Position X="7.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
     <NestedTypes>
-      <Enum Name="GameOfLife.Entities.Grass.State" Collapsed="true">
+      <Enum Name="GameOfLife.Entities.Grass.State">
         <TypeIdentifier>
           <NewMemberFileName>Entities\Grass.cs</NewMemberFileName>
         </TypeIdentifier>
