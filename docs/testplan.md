@@ -83,6 +83,7 @@ Sims may print out information about themselves this way and the [GameManger](..
 
 - Check if the method returns **true** when the HP reaches **0**.
 - Check if the method returns **false** when the HP is greater than **0**.
+- Ensure that the Fox dies when the Age is greater than **50**.
 
 ### ShouldCreateDescendant
 
@@ -144,6 +145,7 @@ Sims may print out information about themselves this way and the [GameManger](..
 
 - Check if the method returns **true** when the HP reaches **0**.
 - Check if the method returns **false** when the HP is greater than **0**.
+- Ensure that the Rabbit dies when the Age is greater than **30**.
 
 ### CanMove
 - Verify that the CanMove method correctly determines if the Rabbit can move.
