@@ -3,8 +3,14 @@ using GameOfLifeLogger;
 namespace GameOfLifeSim;
 
 public class GameManager {
+    /// <summary>The <see cref="GameOfLifeSim.Grid"/> used for the simulation.</summary>
     public Grid Grid { get; }
 
+    /// <summary>Handles the game logic for the simulation.</summary>
+    /// <param name="gridWidth">The <see cref="GameOfLifeSim.Grid.Width"/> of the new <see cref="Grid"/>.</param>
+    /// <param name="gridHeight">The <see cref="GameOfLifeSim.Grid.Height"/> of the new <see cref="Grid"/>.</param>
+    /// <param name="cellCapacity">The <see cref="GameOfLifeSim.Grid.CellCapacity"/> of the new <see cref="Grid"/>.</param>
+    /// <param name="sims">An array of <see cref="ISimulable"/> objects to be added to the <see cref="Grid"/></param>
     public GameManager(int gridWidth, int gridHeight, int cellCapacity = 8, params ISimulable[] sims) {
         Grid = new(gridWidth, gridHeight, cellCapacity);
         foreach (ISimulable sim in sims)
@@ -90,6 +96,15 @@ public class GameManager {
                 }
     }
 
+    /// <summary>
+    /// Performs four update loops int the following order:
+    /// <list type="number">
+    /// <item><description>Run the <see cref="ISimulable.Update"/> method of all Sims.</description></item>
+    /// <item><description>Call the <see cref="ISimulable.ShouldDie"/> method of all Sims and remove them if it returns True.</description></item>
+    /// <item><description>Call the <see cref="ISimulable.NewDescendant"/> method of all Sims. If it returns an instance, add it to the <see cref="Grid"/>.</description></item>
+    /// <item><description>Move all Sims to their <see cref="ISimulable.NextPosition"/> if it is not null. After that set it to null again.</description></item>
+    /// </list>
+    /// </summary>
     public void Update() {
         UpdateSims();
         KillSims();
@@ -97,11 +112,15 @@ public class GameManager {
         MoveSims();
     }
 
+    /// <summary>Adds the specified Sims to the <see cref="Grid"/>.</summary>
+    /// <param name="sims">The collection of Sims to be added.</param>
     public void AddSims(IEnumerable<ISimulable> sims) {
         foreach (ISimulable sim in sims)
             Grid.CreateSim(sim);
     }
 
+    /// <summary>Adds the specified Sims to the <see cref="Grid"/>.</summary>
+    /// <param name="sims">The array of Sims to be added.</param>
     public void AddSims(params ISimulable[] sims) {
         foreach (ISimulable sim in sims)
             Grid.CreateSim(sim);
