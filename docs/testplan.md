@@ -2,7 +2,7 @@
 
 The purpose of this test plan is to ensure that the both the simulation and the application responsible for handling and displaying it are working as intended. 
 
-Some of the basic functionality like Sim creation, movement and deletion are covered with [unit tests](../GameOfLifeSimTest/GirdTest.cs)
+Some of the basic functionality like Sim creation, movement, deletion and csv loading are covered with unit tests.
 that run automatically with each push to GitHub via a [workflow](../.github/workflows/dotnet.yml).
 > 'Sims' and 'Entities' can be used interchangeably within the context of the project.
 
