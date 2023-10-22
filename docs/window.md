@@ -3,6 +3,20 @@
 The window of the application is made with the [Gtk 3.22](https://github.com/GNOME/gtk/tree/gtk-3-22) wrapper, [GtkSharp](https://github.com/GtkSharp/GtkSharp).
 
 
+## Prerequisites
+
+[.NET Runtime 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to run the application\
+or\
+[.NET SDK 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to build the application from source as well
+
+## Usage
+
+The project file you need to run is the [GameOfLifeApp.csproj](../GameOfLifeApp/GameOfLifeApp.csproj), which can be done by running the `dotnet run --project GameOfLifeApp/GameOfLifeApp.csproj` command from the root directory of the project.
+
+If you want to run a precompiled version, you can downloading one of the available [releases](https://github.com/Toarexer/GameOfLife/releases).
+After that you can run the application with the `dotnet GameOfLifeApp.dll` command.
+
+
 ## User Interface
 
 ![Game of Life App with markings](./imgs/gol-app-marked.png)
