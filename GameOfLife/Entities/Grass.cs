@@ -99,7 +99,7 @@ namespace GameOfLife.Entities
             if (emptyTiles.Count == 0) return null;
             _offsprings++;
             
-            var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
+            var grassDescendant = new Grass(emptyTiles[rnd.Next(0, emptyTiles.Count)]);
             Logger.Info($"New Grass at: {grassDescendant.Position}");
             return grassDescendant;
         }
