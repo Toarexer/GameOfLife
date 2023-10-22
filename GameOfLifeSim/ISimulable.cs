@@ -40,5 +40,5 @@ public interface ISimulable {
     ISimulable? NewDescendant(Grid grid);
 
     /// <returns>A <see cref="DisplayInfo"/> that specifies the name and the <see cref="DisplayInfo.DisplayColor"/> the Sim should be displayed with.</returns>
-    DisplayInfo Info() => new(GetType().Name, DisplayInfo.DisplayColor.Default);
+    DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, DisplayInfo.DisplayColor.Default);
 }

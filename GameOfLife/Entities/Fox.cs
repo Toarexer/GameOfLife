@@ -127,10 +127,10 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
     }
     
     /// <summary>
-    /// Provides display information for the grass, including its type and color.
+    /// Provides display information for the fox, including its type and color.
     /// </summary>
     /// <returns>A `DisplayInfo` object containing type information and a color (orange).</returns>
-    public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(255, 127, 0));
+    public DisplayInfo Info() => new(GetType().Name, new(255, 127, 0));
 
     public int CompareTo(Fox? other)
     {

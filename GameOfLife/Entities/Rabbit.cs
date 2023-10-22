@@ -158,10 +158,10 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     }
     
     /// <summary>
-    /// Provides display information for the grass, including its type and color.
+    /// Provides display information for the rabbit, including its type and color.
     /// </summary>
     /// <returns>A `DisplayInfo` object containing type information and a color (gray).</returns>
-    public DisplayInfo Info() => new(GetType().FullName ?? GetType().Name, new(150, 150, 100));
+    public DisplayInfo Info() => new(GetType().Name, new(150, 150, 100));
 
     public int CompareTo(Rabbit? other)
     {

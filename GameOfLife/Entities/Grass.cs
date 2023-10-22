@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GameOfLifeLogger;
 using GameOfLifeSim;
@@ -132,7 +133,15 @@ namespace GameOfLife.Entities
         /// Provides display information for the grass, including its type and color.
         /// </summary>
         /// <returns>A DisplayInfo object containing type information and a color (green).</returns>
-        public DisplayInfo Info() => new DisplayInfo(GetType().FullName ?? GetType().Name, new (0, 255, 0));
+        public DisplayInfo Info()
+        {
+            return Age switch
+            {
+                State.Tuft => new DisplayInfo($"{Age} {GetType().Name}", new (0, 255, 0)),
+                State.Tender => new DisplayInfo($"{Age} {GetType().Name}", new (0, 205, 0)),
+                _ => new DisplayInfo($"{GetType().Name} {Age}", new (0, 155, 0))
+            };
+        }
 
         public override string ToString()
         {
