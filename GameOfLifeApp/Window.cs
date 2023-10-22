@@ -34,8 +34,10 @@ internal sealed class GameManagerWindow : Gtk.Window {
     private readonly Gtk.ListBox _errorList = new();
 
     // Controls
-    private readonly Gtk.FileChooserButton _fileChooser = new("Open a file", Gtk.FileChooserAction.Open)
-        { TooltipText = "Open a csv file with the correct format to load an initial grid state" };
+    private readonly Gtk.FileChooserButton _fileChooser = new("Open a file", Gtk.FileChooserAction.Open) {
+        TooltipText = "Open a csv file with the correct format to load an initial grid state"
+    };
+
     private readonly Gtk.CheckButton _autorunSwitch = new() { TooltipText = "Autorun", Label = "Autorun" };
     private readonly Gtk.SpinButton _intervalButton = new(100, 10000, 1) { TooltipText = "Millisecond interval" };
     private readonly Gtk.Button _stepButton = new() { TooltipText = "Step the simulation", Label = "Step" };
@@ -44,17 +46,18 @@ internal sealed class GameManagerWindow : Gtk.Window {
     private int _infoCount, _errorCount;
 
     public GameManagerWindow(string title, Sim.GameManager gm) : base(title) {
-        DefaultSize = new(940, 940);
+        DefaultSize = new(960, 960);
         GameManager = gm;
         Shown += (_, _) => Update(true);
         Destroyed += (_, _) => Gtk.Application.Quit();
 
+        _hPaned.WidthRequest = 480;
         _hPaned.Add1(_lvPaned);
         _hPaned.Add2(_rvPaned);
 
-        _typeListScroll.WidthRequest = 240;
         _typeListScroll.Add(_typeList);
 
+        _lvPaned.WidthRequest = 240;
         _lvPaned.Pack1(_typeListScroll, true, false);
         _lvPaned.Pack2(_controlList, false, false);
 
@@ -66,6 +69,7 @@ internal sealed class GameManagerWindow : Gtk.Window {
         _logTabs.AppendPage(_infoListScroll, _infoTabLabel);
         _logTabs.AppendPage(_errorListScroll, _errorTabLabel);
 
+        _rvPaned.WidthRequest = 240;
         _rvPaned.Pack1(_area, true, false);
         _rvPaned.Pack2(_logTabs, false, false);
 
@@ -77,6 +81,7 @@ internal sealed class GameManagerWindow : Gtk.Window {
         _controlList.Add(_stepButton);
         _controlList.Add(_exitButton);
 
+        _area.HeightRequest = 240;
         _area.Drawn += DrawGrid;
 
         Add(_hPaned);
@@ -116,7 +121,7 @@ internal sealed class GameManagerWindow : Gtk.Window {
             else
                 autorunCancellation.Cancel();
         };
-        
+
         _stepButton.Clicked += (_, _) => Update();
 
         _exitButton.Clicked += (_, _) => Destroy();
@@ -138,13 +143,15 @@ internal sealed class GameManagerWindow : Gtk.Window {
             _errorTabLabel.Text = $"Errors ({++_errorCount})";
         });
     }
-    
+
     private void Update(bool windowOnly = false) {
         _infoCount = _errorCount = 0;
         foreach (Gtk.Widget child in _infoList.Children)
             _infoList.Remove(child);
         foreach (Gtk.Widget child in _errorList.Children)
             _errorList.Remove(child);
+        _infoTabLabel.Text = "Info (0)";
+        _errorTabLabel.Text = "Errors (0)";
 
         if (!windowOnly)
             GameManager.Update();
