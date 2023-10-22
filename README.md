@@ -9,4 +9,4 @@ This simulation is an extended variant of John Conway's Game of Life. We added v
 Animals focus on reproduction, hunting, and surviving in their environment.\
 Foxes can eat rabbits when they are hungry. Rabbits can move, eat grass, and breed in pairs.\
 Grass have different states of growth and it can spread to neighboring cells randomly.\
-Each entity has its own rules and interactions, which increases the complexity of the simulation.\
+Each entity has its own rules and interactions, which increases the complexity of the simulation.
