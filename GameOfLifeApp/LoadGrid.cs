@@ -37,7 +37,7 @@ public static partial class App {
 
             Type? type = Type.GetType($"GameOfLife.Entities.{data[0]}, GameOfLife");
             if (type is null)
-                throw new ReflectionTypeLoadException(new[] { type }, null, $"GameOfLife.Entities.{data[0]}");
+                throw new ReflectionTypeLoadException(new[] { type }, null, $"GameOfLife.Entities.{data[0]} does not exist");
 
             Sim.GridPosition pos = new(int.Parse(data[1]), int.Parse(data[2]));
 
@@ -46,7 +46,7 @@ public static partial class App {
                 gm.AddSims(sim);
             else {
                 string isimname = typeof(Sim.ISimulable).FullName ?? nameof(Sim.ISimulable);
-                throw new TypeLoadException($"GameOfLife.Entities.{data[0]} is not {isimname}");
+                throw new TypeLoadException($"GameOfLife.Entities.{data[0]} is not a {isimname}");
             }
         }
 
