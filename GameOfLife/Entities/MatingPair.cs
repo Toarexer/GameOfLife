@@ -1,5 +1,3 @@
-using GameOfLifeSim;
-
 namespace GameOfLife.Entities
 {
     /// <summary>
