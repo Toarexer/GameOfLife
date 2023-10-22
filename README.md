@@ -1,17 +1,25 @@
-# Game of life - Élet játéka
+# Game of life (Nyulak és Rókák)
 
-The simulation is based on the rule system of John Conway's Game of Life.
+The simulation is based on the rule system of John Conway's Game of Life, but with multiple modifications to it.
 
-### [User Manual](./docs/window.md)
-### [Test Plan](./docs/testplan.md)
+Please check the [User Manual](./docs/window.md) for instructions regarding the usage of the program.
 
-This simulation is an extended variant of John Conway's Game of Life.\
-We added various creatures each with their own behaviors and properties, such as:
-- Foxes
-- Rabbits
-- Grass
-#
+## Meet the Sims
+
+The simulation can easily be extended with multiple creatures, which are referred to as **Sims** or **Entities**.\
+Currently the following three are implemented for demonstration:
+- [Fox](./GameOfLife/Entities/Fox.cs)
+- [Rabbit](./GameOfLife/Entities/Rabbit.cs)
+- [Grass](./GameOfLife/Entities/Grass.cs)
+
+Their expected behavior is detailed in the [Test Plan](./docs/testplan.md).
+
+The simulation is non-deterministic and Sims may decide their next move based on random chance.
+
+## Main features of the Sims
+
 Animals focus on reproduction, hunting, and surviving in their environment.\
-Foxes can eat rabbits when they are hungry. Rabbits can move, eat grass, and breed in pairs.\
-Grass have different states of growth and it can spread to neighboring cells randomly.\
-Each entity has its own rules and interactions, which increases the complexity of the simulation.
+Foxes can eat rabbits when they are hungry.\
+Rabbits can move, eat grass, and breed in pairs.\
+Grass has different states of growth and it can spread to neighboring cells randomly.\
+Each entity has its own rules and interactions with others, which increases the complexity of the simulation.
