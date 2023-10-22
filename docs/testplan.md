@@ -24,6 +24,12 @@ Building from source requires the [.NET 7](https://dotnet.microsoft.com/en-us/do
 The [GtkSharp](https://github.com/GtkSharp/GtkSharp) library is included within the project as a NuGET package.
 
 
+## Core and Sim Classes
+
+![Core Classes](./imgs/uml-gm.png)
+![Sim Classes](./imgs/uml-sims.png)
+
+
 ## Expected Behavior
 
 The following sections will detail the expected behavior of the crucial parts of the simulation.
