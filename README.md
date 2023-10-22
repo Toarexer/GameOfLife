@@ -19,7 +19,7 @@ The simulation is non-deterministic and Sims may decide their next move based on
 ## Main features of the Sims
 
 Animals focus on reproduction, hunting, and surviving in their environment.\
-Foxes can eat rabbits when they are hungry.\
+Foxes can eat rabbits when they are hungry, and breed in pairs.\
 Rabbits can move, eat grass, and breed in pairs.\
 Grass has different states of growth and it can spread to neighboring cells randomly.\
 Each entity has its own rules and interactions with others, which increases the complexity of the simulation.
