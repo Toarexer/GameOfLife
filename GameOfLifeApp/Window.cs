@@ -146,18 +146,15 @@ internal sealed class GameManagerWindow : Gtk.Window {
 
     private void Update(bool windowOnly = false) {
         _infoCount = _errorCount = 0;
-        foreach (Gtk.Widget child in _infoList.Children)
-            _infoList.Remove(child);
-        foreach (Gtk.Widget child in _errorList.Children)
-            _errorList.Remove(child);
         _infoTabLabel.Text = "Info (0)";
         _errorTabLabel.Text = "Errors (0)";
 
+        DestroyChildren(_infoList);
+        DestroyChildren(_errorList);
+        DestroyChildren(_typeList);
+
         if (!windowOnly)
             GameManager.Update();
-
-        foreach (var child in _typeList.Children)
-            _typeList.Remove(child);
 
         var info = GameManager.Grid.SelectMany(x => x).GroupBy(x => x.Info());
         foreach (var g in info) {
@@ -218,5 +215,12 @@ internal sealed class GameManagerWindow : Gtk.Window {
                     context.Fill();
                 }
             }
+    }
+
+    private void DestroyChildren(Gtk.Container container) {
+        foreach (Gtk.Widget child in container.Children) {
+            container.Remove(child);
+            child.Destroy();
+        }
     }
 }
