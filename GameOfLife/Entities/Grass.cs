@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using GameOfLifeLogger;
 using GameOfLifeSim;
 
@@ -99,7 +97,7 @@ namespace GameOfLife.Entities
             if (emptyTiles.Count == 0) return null;
             _offsprings++;
             
-            var grassDescendant = new Grass(emptyTiles.ElementAt(rnd.Next(0, emptyTiles.Count)));
+            var grassDescendant = new Grass(emptyTiles[rnd.Next(0, emptyTiles.Count)]);
             Logger.Info($"New Grass at: {grassDescendant.Position}");
             return grassDescendant;
         }
