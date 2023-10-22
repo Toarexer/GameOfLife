@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>GameOfLifeSimTest</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\GameOfLifeApp\GameOfLifeApp.csproj" />
       <ProjectReference Include="..\GameOfLifeSim\GameOfLifeSim.csproj" />
     </ItemGroup>
 

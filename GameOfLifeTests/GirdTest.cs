@@ -1,18 +1,18 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GameOfLifeSim;
 
-namespace GameOfLifeSimTest;
+namespace GameOfLifeTests;
 
 [TestClass]
 public class GirdTest {
     [TestMethod]
     public void Test01_Grid() {
-        Dummy[] dummies = {
-            new() { Position = new(0, 0) },
-            new() { Position = new(6, 3) },
-            new() { Position = new(4, 4) },
-            new() { Position = new(8, 4) },
-            new() { Position = new(16, 4) },
+        DummySim[] dummies = {
+            new(new(0, 0)),
+            new(new(6, 3)),
+            new(new(4, 4)),
+            new(new(8, 4)),
+            new(new(16, 4)),
         };
         GameManager gm = new(32, 32, 4, dummies);
 
@@ -24,12 +24,12 @@ public class GirdTest {
 
     [TestMethod]
     public void Test02_GridEnumeration() {
-        Dummy[] dummies = {
-            new() { Position = new(0, 0) },
-            new() { Position = new(6, 3) },
-            new() { Position = new(4, 4) },
-            new() { Position = new(8, 4) },
-            new() { Position = new(16, 4) },
+        DummySim[] dummies = {
+            new(new(0, 0)),
+            new(new(6, 3)),
+            new(new(4, 4)),
+            new(new(8, 4)),
+            new(new(16, 4)),
         };
         GameManager gm = new(32, 32, 4, dummies);
 
@@ -40,7 +40,7 @@ public class GirdTest {
     [TestMethod]
     public void Test03_GridMoveSim() {
         GameManager gm = new(32, 32);
-        gm.AddSims(new Dummy { Position = new(12, 12) });
+        gm.AddSims(new DummySim(new(12, 12)));
 
         ISimulable? sim = gm.Grid[12, 12].FirstOrDefault();
 
@@ -60,14 +60,14 @@ public class GirdTest {
     [TestMethod]
     public void Test04_GridKillSim() {
         GameManager gm = new(32, 32);
-        gm.AddSims(new Dummy { Position = new(13, 13) });
+        gm.AddSims(new DummySim(new(13, 13)));
 
         ISimulable? sim = gm.Grid[13, 13].FirstOrDefault();
         gm.Update();
 
         Assert.IsNotNull(sim);
 
-        (sim as Dummy)!.Health = 0;
+        (sim as DummySim)!.Health = 0;
         gm.Update();
 
         Assert.IsNull(gm.Grid[13, 13].FirstOrDefault());

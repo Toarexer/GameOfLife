@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife", "GameOfLife\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeSim", "GameOfLifeSim\GameOfLifeSim.csproj", "{50F2E445-70AE-4929-8EA2-07B0462781EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeSimTest", "GameOfLifeSimTest\GameOfLifeSimTest.csproj", "{157AE448-776A-458D-AB2A-A5F2F381DB15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeTests", "GameOfLifeTests\GameOfLifeTests.csproj", "{157AE448-776A-458D-AB2A-A5F2F381DB15}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeApp", "GameOfLifeApp\GameOfLifeApp.csproj", "{A2C1F20E-9073-4A2C-A184-038A0208E0A1}"
 EndProject

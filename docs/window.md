@@ -69,7 +69,7 @@ Both tabs only display the messages from the last step/cycle of the simulation, 
 ### Info Tab
 
 The Sims can display information about themselves here which is useful for debugging their behavior.\
-The [GameManager](../GameOfLifeSim/GameManager.cs) also displays failed updates here, but these are not errors, because their failure is caused by the constraints of the [Grid](../GameOfLifeSim/Grid.cs) system such as *trying to move out of the grid* or *trying to move to a cell that is already full*.
+The [GameManager](../GameOfLifeSim/GameManager.cs) also displays failed updates here, but these are not errors, because their failure is caused by the constraints of the [Grid](../GameOfLifeSim/Grid.cs) system such as trying to put a Sim *outside the grid* or *to a cell that is already full*.
 
 ### Errors Tab
 

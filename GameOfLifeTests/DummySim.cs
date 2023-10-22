@@ -1,13 +1,19 @@
-namespace GameOfLifeSimTest;
+namespace GameOfLifeTests;
 
 using GameOfLifeSim;
 
-class Dummy : ISimulable {
-    public GridPosition Position { get; set; } = GridPosition.Zero;
+class DummySim : ISimulable {
+    public GridPosition Position { get; set; }
     public GridPosition? NextPosition { get; set; }
 
     public int Health { get; set; } = 100;
-    public bool CanMate { get; set; } = false;
+
+    public DummySim(GridPosition pos) {
+        Position = pos;
+    }
+
+    public DummySim() : this(GridPosition.Zero) {
+    }
 
     void ISimulable.Update(Grid grid) {
     }
