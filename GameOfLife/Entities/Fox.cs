@@ -39,7 +39,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         Eat();
         IncreaseAge();
         if (_createdDescendant) _createdDescendant = false;
-        //Logger.Info(this.ToString());
+        Logger.Info(this.ToString());
     }
     
     protected override bool ShouldEat() 
@@ -61,7 +61,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         if (Hp + hpToGive > MaxHp)
         {
             Hp = MaxHp;
-            //Logger.Info($"{this}\t|\n\tATE: {rabbitToEat}");
+            Logger.Info($"{this}\t|\n\tATE: {rabbitToEat}");
             return;
         }
         Hp += hpToGive;
@@ -71,7 +71,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
     {
         if (Hp < 1|| Age > 50)
         {
-            //Logger.Info($"Died: {this}");
+            Logger.Info($"Died: {this}");
             return true;
         }
         return false;
@@ -90,7 +90,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
             MatingPair2 = { HasMatingPartner = true }
         };
 
-        //Logger.Info(_matingPair.ToString());
+        Logger.Info(_matingPair.ToString());
         return HasMatingPartner && _foxes.Count == 1;
     }
 
@@ -112,7 +112,7 @@ public class Fox : Animal, ISimulable, IComparable<Fox>
         }
 
         _createdDescendant = true;
-        //Logger.Info($"New FOX at: {Position}");
+        Logger.Info($"New FOX at: {Position}");
         return new Fox(Position);
     }
 

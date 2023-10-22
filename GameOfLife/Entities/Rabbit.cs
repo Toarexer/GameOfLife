@@ -45,7 +45,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         Eat();
         IncreaseAge();
         if (_createdDescendant) _createdDescendant = false;
-        //Logger.Info(this.ToString());
+        Logger.Info(this.ToString());
     }
 
     protected override bool ShouldCreateDescendant()
@@ -61,7 +61,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
             MatingPair2 = { HasMatingPartner = true }
         };
 
-        //Logger.Info(_matingPair.ToString());
+        Logger.Info(_matingPair.ToString());
         return HasMatingPartner && _foxes.Count == 0 && _rabbits.Count == 1;
     }
 
@@ -84,7 +84,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
         }
 
         _createdDescendant = true;
-        //Logger.Info($"New Rabbit at: {Position}");
+        Logger.Info($"New Rabbit at: {Position}");
         return new Rabbit(Position);
     }
 
@@ -93,7 +93,7 @@ public class Rabbit : Animal, ISimulable, IComparable<Rabbit>
     {
         if (Hp < 1 || Age > 30)
         {
-            //Logger.Info($"Died: {this}");
+            Logger.Info($"Died: {this}");
             return true;
         }
         return false;
