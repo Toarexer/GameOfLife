@@ -5,6 +5,8 @@ The window of the application is made with the [Gtk 3.22](https://github.com/GNO
 
 ## Prerequisites
 
+[Gtk 3.22](https://www.gtk.org/)
+
 [.NET Runtime 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to run the application\
 or\
 [.NET SDK 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to build the application from source as well
